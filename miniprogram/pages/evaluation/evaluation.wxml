@@ -1,0 +1,59 @@
+<!--pages/evaluation/evaluation.wxml-->
+<view class="container">
+  <view class="tabs">
+    <view class="tab-item {{currentTab === 'pending' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="pending">待评价</view>
+    <view class="tab-item {{currentTab === 'completed' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="completed">已评价</view>
+  </view>
+
+  <view class="evaluation-list">
+    <!-- 待评价列表 -->
+    <block wx:if="{{currentTab === 'pending'}}">
+      <view wx:if="{{pendingCourses.length > 0}}">
+        <view class="course-item" wx:for="{{pendingCourses}}" wx:key="id" bindtap="startEvaluation" 
+              data-index="{{index}}" 
+              data-course-id="{{item.course_id}}" 
+              data-schedule-id="{{item.schedule_id}}" 
+              data-booking-id="{{item.id}}">
+          <view class="course-content">
+            <view class="course-title">{{item.title}}</view>
+            <view class="course-date">课程日期: {{item.schedule_date_display || item.schedule_date}}</view>
+          </view>
+          <view class="course-action">
+            <text class="action-text">去评价 ></text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-state">
+        <text>暂无待评价课程</text>
+      </view>
+    </block>
+    
+    <!-- 已评价列表 -->
+    <block wx:if="{{currentTab === 'completed'}}">
+      <view wx:if="{{completedEvaluations.length > 0}}">
+        <view class="course-item" wx:for="{{completedEvaluations}}" wx:key="id" 
+              bindtap="viewEvaluationDetail" 
+              data-evaluation-id="{{item.id}}">
+          <view class="course-content">
+            <view class="course-title">{{item.title}}</view>
+            <view class="course-date">课程日期: {{item.schedule_date_display || item.schedule_date}}</view>
+            <view class="course-date" style="font-size: 24rpx; color: #999; margin-top: 8rpx;">
+              评价时间: {{item.submitted_at_formatted || item.submitted_at}}
+            </view>
+          </view>
+          <view class="course-action">
+            <text class="action-text">查看详情 ></text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-state">
+        <text>暂无已评价课程</text>
+      </view>
+    </block>
+
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+  </view>
+</view>
+

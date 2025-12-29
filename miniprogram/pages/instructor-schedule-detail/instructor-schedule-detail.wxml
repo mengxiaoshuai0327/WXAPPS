@@ -1,0 +1,131 @@
+<!--pages/instructor-schedule-detail/instructor-schedule-detail.wxml-->
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+  
+  <view wx:elif="{{schedule}}" class="schedule-detail">
+    <!-- 课程信息 -->
+    <view class="section">
+      <view class="section-title">课程信息</view>
+      <view class="info-item">
+        <text class="info-label">课程名称：</text>
+        <text class="info-value">{{schedule.title}}</text>
+      </view>
+      <view class="info-item" wx:if="{{schedule.course_code}}">
+        <text class="info-label">课程编号：</text>
+        <text class="info-value">{{schedule.course_code}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">上课时间：</text>
+        <text class="info-value">{{schedule.date_time_text}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">上课地点：</text>
+        <text class="info-value">{{schedule.location || '线下·教室'}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">报名人数：</text>
+        <text class="info-value">{{enrolledUsers ? enrolledUsers.length : 0}}/{{schedule.max_students}} 人</text>
+      </view>
+    </view>
+
+    <!-- 报名人员 -->
+    <view class="section">
+      <view class="section-title">报名人员（{{enrolledUsers ? enrolledUsers.length : 0}}人）</view>
+      <view wx:if="{{enrolledUsers && enrolledUsers.length > 0}}" class="users-list">
+        <view class="user-item" wx:for="{{enrolledUsers}}" wx:key="user_id">
+          <view class="user-avatar">
+            <image wx:if="{{item.avatar_url}}" src="{{item.avatar_url}}" mode="aspectFill"></image>
+            <text wx:else class="avatar-text">{{item.nickname ? item.nickname[0] : 'U'}}</text>
+          </view>
+          <view class="user-info">
+            <view class="user-name-row">
+              <text class="user-name">{{item.real_name || item.nickname || '未设置'}}</text>
+              <view wx:if="{{item.checkin_status === 'checked_in'}}" class="checkin-badge">
+                <text class="checkin-text">已签到</text>
+              </view>
+            </view>
+            <view class="user-detail" wx:if="{{item.member_id}}">
+              <text>会员ID：{{item.member_id}}</text>
+            </view>
+            <view class="user-detail" wx:if="{{item.phone}}">
+              <text>手机号：{{item.phone}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-state">
+        <text>暂无报名人员</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮：触发签到 -->
+    <view class="action-section" wx:if="{{schedule && !schedule.checkin_triggered}}">
+      <button 
+        class="btn-trigger {{checkInLoading ? 'loading' : ''}} {{!schedule.can_trigger_checkin ? 'disabled' : ''}}" 
+        bindtap="triggerCheckIn"
+        disabled="{{checkInLoading || !schedule.can_trigger_checkin}}">
+        <view wx:if="{{!checkInLoading}}" class="btn-content">
+          <text class="btn-icon">✓</text>
+          <text class="btn-text">触发签到打卡</text>
+        </view>
+        <view wx:else class="btn-content">
+          <text class="btn-loading">⏳</text>
+          <text class="btn-text">处理中...</text>
+        </view>
+      </button>
+      <view class="trigger-tip" wx:if="{{schedule && schedule.checkin_trigger_reason}}">
+        <text class="tip-text">提示：{{schedule.checkin_trigger_reason}}</text>
+      </view>
+      <view class="trigger-tip" wx:else>
+        <text class="tip-text">提示：只能在课程开课当天触发签到</text>
+      </view>
+    </view>
+
+    <view class="tip-section" wx:if="{{schedule && schedule.checkin_triggered}}">
+      <view class="success-badge">
+        <text class="success-icon">✓</text>
+        <text class="success-text">已触发签到</text>
+      </view>
+      <view class="tip-detail">
+        <text>所有报名学员已收到签到提醒</text>
+      </view>
+    </view>
+
+    <!-- 操作按钮：触发课后评价 -->
+    <view class="action-section" wx:if="{{schedule && !schedule.questionnaire_triggered}}">
+      <button 
+        class="btn-trigger {{checkInLoading ? 'loading' : ''}} {{!schedule.can_trigger_evaluation ? 'disabled' : ''}}" 
+        bindtap="triggerEvaluation"
+        disabled="{{checkInLoading || !schedule.can_trigger_evaluation}}">
+        <view wx:if="{{!checkInLoading}}" class="btn-content">
+          <text class="btn-icon">✓</text>
+          <text class="btn-text">触发课后评价</text>
+        </view>
+        <view wx:else class="btn-content">
+          <text class="btn-loading">⏳</text>
+          <text class="btn-text">处理中...</text>
+        </view>
+      </button>
+      <view class="trigger-tip" wx:if="{{schedule && schedule.trigger_reason}}">
+        <text class="tip-text">提示：{{schedule.trigger_reason}}</text>
+      </view>
+      <view class="trigger-tip" wx:else>
+        <text class="tip-text">提示：课程结束前1小时之后可以触发课后评价</text>
+      </view>
+    </view>
+
+    <view class="tip-section" wx:if="{{schedule && schedule.questionnaire_triggered}}">
+      <view class="success-badge">
+        <text class="success-icon">✓</text>
+        <text class="success-text">已触发课后评价</text>
+      </view>
+      <view class="tip-detail">
+        <text>所有报名学员已收到评价问卷提醒</text>
+      </view>
+    </view>
+  </view>
+  
+  <view wx:else class="empty-state">
+    <text>暂无排课信息</text>
+  </view>
+</view>

@@ -1,0 +1,35 @@
+<!--pages/checkin/checkin.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="header-title">签到打卡</view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+
+  <view wx:else>
+    <view wx:if="{{pendingCheckins.length > 0}}" class="checkin-list">
+      <view class="checkin-item" wx:for="{{pendingCheckins}}" wx:key="booking_id">
+        <view class="course-content">
+          <view class="course-title">{{item.title}}</view>
+          <view class="course-info">
+            <text>上课时间：{{item.schedule_date_text}} {{item.time_text}}</text>
+          </view>
+          <view class="course-info" wx:if="{{item.course_code}}">
+            <text>课程编号：{{item.course_code}}</text>
+          </view>
+        </view>
+        <view class="course-action">
+          <button class="btn-checkin" bindtap="checkIn" 
+                  data-id="{{item.booking_id}}" 
+                  data-title="{{item.title}}">
+            签到
+          </button>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text>暂无待签到课程</text>
+    </view>
+  </view>
+</view>
+

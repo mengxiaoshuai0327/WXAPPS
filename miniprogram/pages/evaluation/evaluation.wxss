@@ -1,0 +1,91 @@
+/* pages/evaluation/evaluation.wxss */
+.container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.tabs {
+  display: flex;
+  background-color: #fff;
+  border-bottom: 1rpx solid #e0e0e0;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 30rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+}
+
+.tab-item.active {
+  color: #1a1a1a;
+  font-weight: bold;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background-color: #1a1a1a;
+  border-radius: 2rpx;
+}
+
+.evaluation-list {
+  padding: 20rpx;
+}
+
+.course-item {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.course-content {
+  flex: 1;
+}
+
+.course-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 12rpx;
+}
+
+.course-date {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.course-action {
+  margin-left: 20rpx;
+}
+
+.action-text {
+  font-size: 28rpx;
+  color: #4A90E2;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 100rpx 40rpx;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.loading {
+  text-align: center;
+  padding: 40rpx;
+  color: #999;
+  font-size: 28rpx;
+}

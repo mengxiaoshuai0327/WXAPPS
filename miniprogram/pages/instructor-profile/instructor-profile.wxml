@@ -1,0 +1,68 @@
+<!--pages/instructor-profile/instructor-profile.wxml-->
+<view class="container">
+  <view class="profile-header" wx:if="{{instructorInfo}}">
+    <view class="instructor-avatar" bindtap="{{isOwnProfile ? 'chooseAvatar' : ''}}">
+      <image wx:if="{{instructorInfo.avatar_url}}" src="{{instructorInfo.avatar_url}}" mode="aspectFill"></image>
+      <text wx:else class="avatar-text">{{instructorInfo.nickname ? instructorInfo.nickname[0] : 'I'}}</text>
+      <view class="avatar-upload-hint" wx:if="{{isOwnProfile}}">
+        <text class="upload-icon">📷</text>
+        <text class="upload-text">点击上传</text>
+      </view>
+    </view>
+    <view class="instructor-name">{{instructorInfo.nickname || '未设置昵称'}}</view>
+  </view>
+
+  <view class="profile-header" wx:else>
+    <view class="instructor-avatar">
+      <text class="avatar-text">I</text>
+    </view>
+    <view class="instructor-name">加载中...</view>
+  </view>
+
+  <view class="info-section" wx:if="{{instructorInfo}}">
+    <view class="section-header">
+      <view class="section-title">讲授课程</view>
+    </view>
+    <view class="courses-list">
+      <view wx:if="{{coursesList.length > 0}}">
+        <view class="course-item" wx:for="{{coursesList}}" wx:key="id">
+          <view class="course-title">{{item.title}}</view>
+          <view class="course-subtitle" wx:if="{{item.subtitle}}">{{item.subtitle}}</view>
+        </view>
+      </view>
+      <view wx:else class="empty-courses">
+        <text>暂无讲授课程</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="info-section" wx:if="{{instructorInfo}}">
+    <view class="section-header">
+      <view class="section-title">个人背景介绍</view>
+      <view class="edit-btn" wx:if="{{isOwnProfile && editingSection !== 'background'}}" bindtap="editBackground">
+        <text class="edit-icon">✏️</text>
+        <text class="edit-text">编辑</text>
+      </view>
+    </view>
+    <view wx:if="{{editingSection === 'background'}}" class="edit-container">
+      <textarea 
+        class="edit-textarea" 
+        value="{{editBackground}}"
+        placeholder="请输入个人背景介绍"
+        bindinput="onBackgroundInput"
+        maxlength="500"
+        show-confirm-bar="{{false}}"
+        auto-height
+      ></textarea>
+      <view class="edit-actions">
+        <button class="btn-cancel" bindtap="cancelEdit">取消</button>
+        <button class="btn-save" bindtap="saveBackground">保存</button>
+      </view>
+    </view>
+    <view wx:else class="content-text">{{instructorInfo.background || '暂无个人背景介绍'}}</view>
+  </view>
+  
+  <view class="info-section" wx:else>
+    <view class="content-text">加载中...</view>
+  </view>
+</view>

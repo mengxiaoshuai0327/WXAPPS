@@ -1,0 +1,8 @@
+<!--pages/protocol/protocol.wxml-->
+<view class="container">
+  <view class="protocol-content">
+    <view class="title">{{title}}</view>
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    <view wx:else class="content">{{content}}</view>
+  </view>
+</view>

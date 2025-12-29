@@ -1,0 +1,126 @@
+<!--pages/ranking/ranking.wxml-->
+<view class="container">
+  <!-- 顶部装饰 -->
+  <view class="top-decoration"></view>
+  
+  <view class="content-wrapper">
+    <!-- Tab切换 -->
+    <view class="section-card">
+      <scroll-view class="tabs" scroll-x="true" enable-flex="true">
+        <view class="tab-item {{currentTab === 'instructor_schedule' ? 'active' : ''}}" 
+              bindtap="switchTab" data-tab="instructor_schedule">
+          排课榜
+        </view>
+        <view class="tab-item {{currentTab === 'member_study' ? 'active' : ''}}" 
+              bindtap="switchTab" data-tab="member_study">
+          学习榜
+        </view>
+        <view class="tab-item {{currentTab === 'theme' ? 'active' : ''}}" 
+              bindtap="switchTab" data-tab="theme">
+          主题榜
+        </view>
+        <view class="tab-item {{currentTab === 'course' ? 'active' : ''}}" 
+              bindtap="switchTab" data-tab="course">
+          评价榜
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 时间范围选择 -->
+    <view class="section-card">
+      <view class="section-title">时间范围</view>
+      <view class="time-range">
+        <view class="range-item {{timeRange === 'month' ? 'active' : ''}}" 
+              bindtap="switchTimeRange" data-range="month">
+          本月
+        </view>
+        <view class="range-item {{timeRange === 'quarter' ? 'active' : ''}}" 
+              bindtap="switchTimeRange" data-range="quarter">
+          近3个月
+        </view>
+        <view class="range-item {{timeRange === 'all' ? 'active' : ''}}" 
+              bindtap="switchTimeRange" data-range="all">
+          全部
+        </view>
+      </view>
+    </view>
+
+    <!-- 排行榜列表 -->
+    <view class="ranking-list">
+      <view class="ranking-item" wx:for="{{rankings[currentTab]}}" wx:key="target_id" wx:for-item="item" wx:for-index="index"
+            bindtap="viewDetail" data-type="{{currentTab}}" data-id="{{item.target_id}}">
+        <view class="rank-number {{item.rank <= 3 ? 'top-' + item.rank : ''}}">{{item.rank}}</view>
+        <view class="rank-avatar" wx:if="{{item.data.avatar}}">
+          <image src="{{item.data.avatar}}" mode="aspectFill"></image>
+        </view>
+        <view class="rank-avatar-placeholder" wx:else>
+          <text class="avatar-text">{{item.data.avatarText}}</text>
+        </view>
+        <view class="rank-content">
+          <view class="rank-title">{{item.data.name || item.data.title || '未知'}}</view>
+          <view class="rank-info">
+            <text wx:if="{{item.data.instructor_name}}" class="info-text">教练：{{item.data.instructor_name}}</text>
+            <text wx:if="{{item.data.theme_name && currentTab !== 'course'}}" class="info-text">主题：{{item.data.theme_name}}</text>
+            <text wx:if="{{item.data.course_code && currentTab !== 'course'}}" class="info-text">课程编号：{{item.data.course_code}}</text>
+            <text wx:if="{{item.data.member_id}}" class="info-text">会员ID：{{item.data.member_id}}</text>
+            <text class="rank-count" wx:if="{{item.data.count !== undefined}}">
+              {{currentTab === 'instructor_schedule' ? '排课' : currentTab === 'member_study' ? '学习' : currentTab === 'theme' ? '排课' : currentTab === 'course' ? '评价' : '数量'}}：{{item.data.count}}
+            </text>
+            <text wx:if="{{item.score && (currentTab === 'course' || currentTab === 'instructor')}}" class="info-text">综合得分：{{item.score}}</text>
+          </view>
+        </view>
+        <view class="arrow">›</view>
+      </view>
+
+      <view wx:if="{{rankings[currentTab].length === 0 && !loading}}" class="empty-state">
+        <text class="empty-text">暂无数据</text>
+      </view>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+  </view>
+
+  <!-- 主题详情弹窗 -->
+  <view wx:if="{{showThemeDetail}}" class="theme-detail-modal" catchtap="closeThemeDetail">
+    <view class="theme-detail-content" catchtap="">
+      <view class="theme-detail-header">
+        <text class="theme-detail-title">{{themeDetail.theme_name}}</text>
+        <text class="theme-detail-close" catchtap="closeThemeDetail">×</text>
+      </view>
+      
+      <view class="theme-detail-body">
+        <view wx:if="{{loadingDetail}}" class="theme-detail-loading">加载中...</view>
+        <view wx:else>
+          <!-- 排课统计 -->
+          <view class="theme-detail-section">
+            <view class="theme-detail-label">排课次数</view>
+            <view class="theme-detail-value">{{themeDetail.schedule_count}}</view>
+          </view>
+
+          <!-- 课程列表 -->
+          <view class="theme-detail-section">
+            <view class="theme-detail-label">课程列表</view>
+            <view wx:if="{{themeDetail.courses.length === 0}}" class="theme-detail-empty">暂无课程</view>
+            <view wx:else class="theme-detail-courses">
+              <view class="theme-detail-course-item" wx:for="{{themeDetail.courses}}" wx:key="course_id">
+                <view class="course-info">
+                  <text class="course-title">{{item.course_title}}</text>
+                  <text wx:if="{{item.course_subtitle}}" class="course-subtitle">{{item.course_subtitle}}</text>
+                  <text class="course-count">排课: {{item.schedule_count}}</text>
+                </view>
+                <view class="course-instructor">
+                  <image wx:if="{{item.instructor_avatar}}" class="instructor-avatar-small" src="{{item.instructor_avatar}}" mode="aspectFill"></image>
+                  <view wx:else class="instructor-avatar-placeholder-small">
+                    <text class="instructor-avatar-text-small">{{item.instructor_name.charAt(0)}}</text>
+                  </view>
+                  <text class="instructor-name-small">{{item.instructor_name}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+

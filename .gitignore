@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+backend/logs/
+backend/backend.log
+admin/frontend.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
+dist/
+build/
+*.map
+
+# Local development scripts (不需要提交到生产环境)
+start-backend-stable.sh
+start-backend.sh
+start-all.sh
+start-admin.sh
+check-backend.sh
+
+# PM2 config (可选，如果不需要PM2可以不提交)
+ecosystem.config.js
+
+# Uploads (根据实际情况决定是否忽略)
+# backend/uploads/
+
+# Test files
+*.test.js
+*.spec.js
+

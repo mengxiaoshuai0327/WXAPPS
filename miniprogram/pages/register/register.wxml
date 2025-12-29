@@ -1,0 +1,190 @@
+<!--pages/register/register.wxml-->
+<view class="container">
+  <!-- 顶部装饰 -->
+  <view class="top-decoration"></view>
+  
+  <view class="content-wrapper">
+    <view class="header">
+      <view class="title">注册会员</view>
+      <view class="subtitle">创建您的账号，开启学习之旅</view>
+    </view>
+
+    <!-- 注册表单 -->
+    <view class="form">
+      <!-- 头像上传 -->
+      <view class="form-item">
+        <view class="avatar-upload">
+          <view class="avatar-preview" bindtap="chooseAvatar">
+            <image wx:if="{{avatarUrl}}" class="avatar-image" src="{{avatarUrl}}" mode="aspectFill"></image>
+            <view wx:else class="avatar-placeholder">
+              <text class="avatar-icon">📷</text>
+              <text class="avatar-text">点击上传</text>
+            </view>
+          </view>
+          <text class="avatar-tip">头像（选填）</text>
+        </view>
+      </view>
+
+      <!-- 姓名 -->
+      <view class="form-item">
+        <view class="input-wrapper">
+          <text class="input-icon">👤</text>
+          <input 
+            class="input" 
+            type="text"
+            placeholder="请输入姓名" 
+            value="{{nickname}}"
+            bindinput="onNicknameInput"
+            maxlength="20"
+          />
+        </view>
+      </view>
+
+      <!-- 所在机构或公司 -->
+      <view class="form-item">
+        <view class="input-wrapper">
+          <text class="input-icon">🏢</text>
+          <input 
+            class="input" 
+            type="text"
+            placeholder="所在机构或公司（选填）" 
+            value="{{company}}"
+            bindinput="onCompanyInput"
+            maxlength="100"
+          />
+        </view>
+      </view>
+
+      <!-- 手机号 -->
+      <view class="form-item">
+        <view class="input-wrapper">
+          <text class="input-icon">📞</text>
+          <input 
+            class="input" 
+            type="number"
+            placeholder="请输入手机号" 
+            value="{{phone}}"
+            bindinput="onPhoneInput"
+            maxlength="11"
+          />
+        </view>
+      </view>
+
+      <!-- 验证码 -->
+      <view class="form-item code-form-item">
+        <view class="input-wrapper code-input-wrapper">
+          <text class="input-icon">🔐</text>
+          <input 
+            class="input code-input" 
+            type="number"
+            placeholder="请输入验证码" 
+            value="{{code}}"
+            bindinput="onCodeInput"
+            maxlength="6"
+          />
+          <button 
+            class="code-btn {{countdown > 0 || !phone ? 'disabled' : ''}}" 
+            bindtap="getVerificationCode"
+            disabled="{{countdown > 0 || !phone}}"
+          >
+            <text wx:if="{{countdown > 0}}" class="countdown-text">{{countdown}}s</text>
+            <text wx:else class="code-btn-text">获取验证码</text>
+          </button>
+        </view>
+        <view class="code-tip" wx:if="{{!phone}}">请先输入手机号</view>
+      </view>
+
+      <!-- 密码 -->
+      <view class="form-item">
+        <view class="input-wrapper">
+          <text class="input-icon">🔒</text>
+          <input 
+            class="input" 
+            type="password"
+            placeholder="请输入密码（至少6位）" 
+            value="{{password}}"
+            bindinput="onPasswordInput"
+            maxlength="20"
+          />
+        </view>
+      </view>
+
+      <!-- 确认密码 -->
+      <view class="form-item">
+        <view class="input-wrapper">
+          <text class="input-icon">🔒</text>
+          <input 
+            class="input" 
+            type="password"
+            placeholder="请再次输入密码" 
+            value="{{confirmPassword}}"
+            bindinput="onConfirmPasswordInput"
+            maxlength="20"
+          />
+        </view>
+      </view>
+
+      <!-- 邀请码 -->
+      <view class="form-item">
+        <view class="input-wrapper">
+          <text class="input-icon">🎁</text>
+          <input 
+            class="input" 
+            type="text"
+            placeholder="邀请码（选填，可填写会员ID/渠道销售ID/教练ID）" 
+            value="{{inviteCode}}"
+            bindinput="onInviteCodeInput"
+            maxlength="20"
+          />
+        </view>
+      </view>
+
+      <!-- 协议同意 -->
+      <view class="agreement-section">
+        <view class="agreement-item">
+          <view class="checkbox {{agreeProtocol ? 'checked' : ''}}" bindtap="toggleAgreeProtocol">
+            <text wx:if="{{agreeProtocol}}" class="check-icon">✓</text>
+          </view>
+          <view class="agreement-text-wrapper">
+            <text class="agreement-text">我已阅读并同意</text>
+            <text class="link" catchtap="viewProtocol">《用户协议》</text>
+          </view>
+        </view>
+        
+        <view class="agreement-item">
+          <view class="checkbox {{agreePrivacy ? 'checked' : ''}}" bindtap="toggleAgreePrivacy">
+            <text wx:if="{{agreePrivacy}}" class="check-icon">✓</text>
+          </view>
+          <view class="agreement-text-wrapper">
+            <text class="agreement-text">我已阅读并同意</text>
+            <text class="link" catchtap="viewPrivacy">《隐私条款》</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <button class="submit-btn {{agreeProtocol && agreePrivacy ? 'active' : ''}}" 
+              bindtap="submitRegister"
+              disabled="{{!agreeProtocol || !agreePrivacy}}">
+        注册会员
+      </button>
+    </view>
+  </view>
+
+  <!-- 协议内容弹窗 -->
+  <view wx:if="{{showProtocolModal}}" class="protocol-modal" bindtap="closeProtocolModal">
+    <view class="protocol-modal-content" catchtap="stopPropagation">
+      <view class="protocol-modal-header">
+        <text class="protocol-modal-title">{{protocolTitle}}</text>
+        <text class="protocol-modal-close" catchtap="closeProtocolModal">×</text>
+      </view>
+      <view class="protocol-modal-body">
+        <view wx:if="{{loadingProtocol}}" class="protocol-loading">加载中...</view>
+        <scroll-view wx:else class="protocol-scroll" scroll-y="true">
+          <view class="protocol-text">{{protocolContent}}</view>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+</view>
+

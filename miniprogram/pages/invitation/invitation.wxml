@@ -1,0 +1,95 @@
+<!--pages/invitation/invitation.wxml-->
+<view class="container">
+  <view class="section">
+    <view class="section-title">我的邀请码</view>
+    <view class="invite-code">
+      <text class="code">{{inviteCode}}</text>
+      <button class="copy-btn" bindtap="copyInviteCode">复制</button>
+    </view>
+    
+    <!-- 二维码显示 -->
+    <view class="qr-code-section" wx:if="{{qrCodeUrl}}">
+      <view class="qr-title">邀请二维码</view>
+      <view class="qr-container">
+        <image class="qr-image" src="{{qrCodeUrl}}" mode="aspectFit"></image>
+      </view>
+      <text class="qr-tip">微信扫一扫，立即注册</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-buttons">
+      <button class="action-btn share-btn" open-type="share">
+        <text class="btn-icon">📤</text>
+        <text>分享邀请</text>
+      </button>
+      <button class="action-btn poster-btn" bindtap="generatePoster">
+        <text class="btn-icon">🎨</text>
+        <text>生成海报</text>
+      </button>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{inviteStats}}">
+    <view class="section-title">邀请统计</view>
+    <view class="stats">
+      <view class="stat-card stat-card-blue">
+        <view class="stat-icon">👥</view>
+        <text class="stat-value">{{inviteStats.total || 0}}</text>
+        <text class="stat-label">总邀请人数</text>
+      </view>
+      <view class="stat-card stat-card-green">
+        <view class="stat-icon">✓</view>
+        <text class="stat-value">{{inviteStats.registered || 0}}</text>
+        <text class="stat-label">已注册</text>
+      </view>
+      <view class="stat-card stat-card-orange">
+        <view class="stat-icon">🎫</view>
+        <text class="stat-value">{{inviteStats.purchased || 0}}</text>
+        <text class="stat-label">已购券</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">邀请奖励</view>
+    <view class="reward-info">
+      <text>• 每成功邀请1位朋友注册会员，即可获得1张100元优惠券</text>
+      <text>• 每位邀请的朋友首次购买课券，即可获得1张500元优惠券</text>
+    </view>
+    
+    <!-- 已获得的邀请奖励优惠券 -->
+    <view class="reward-summary" wx:if="{{inviteCoupons.length > 0}}">
+      <view class="summary-title">累计获得奖励：¥{{totalReward}}</view>
+      <view class="coupons-list">
+        <view class="coupon-item" wx:for="{{inviteCoupons}}" wx:key="id">
+          <view class="coupon-amount">¥{{item.amount}}</view>
+          <view class="coupon-details">
+            <view class="coupon-info-row">
+              <text class="coupon-source">{{item.source === 'invite_register' ? '注册奖励' : '购券奖励'}}</text>
+              <view class="coupon-status-tag {{item.status === 'used' ? 'status-used' : item.status === 'expired' ? 'status-expired' : 'status-unused'}}">
+                {{item.status === 'used' ? '已使用' : item.status === 'expired' ? '已过期' : '未使用'}}
+              </view>
+            </view>
+            <text class="coupon-date">{{item.created_at_formatted || item.created_at}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 海报预览弹窗 -->
+  <view class="poster-modal" wx:if="{{showPoster}}" bindtap="closePoster">
+    <view class="poster-content" catchtap="stopPropagation">
+      <view class="poster-header">
+        <text class="poster-title">邀请海报</text>
+        <text class="poster-close" bindtap="closePoster">×</text>
+      </view>
+      <image class="poster-preview" src="{{posterImage}}" mode="aspectFit"></image>
+      <view class="poster-actions">
+        <button class="poster-action-btn" bindtap="savePoster">保存到相册</button>
+        <button class="poster-action-btn cancel-btn" bindtap="closePoster">取消</button>
+      </view>
+    </view>
+  </view>
+</view>
+

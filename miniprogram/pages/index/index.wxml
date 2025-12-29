@@ -1,0 +1,400 @@
+<!--pages/index/index.wxml-->
+<wxs module="utils">
+  function formatAmount(amount) {
+    var num = parseFloat(amount || 0);
+    if (isNaN(num)) return '0.00';
+    if (num % 1 === 0) {
+      return num.toString();
+    }
+    return num.toFixed(2);
+  }
+  module.exports.formatAmount = formatAmount;
+</wxs>
+<view class="container">
+  <!-- 顶部装饰 -->
+  <view class="top-decoration"></view>
+  
+  <!-- 游客首页 -->
+  <block wx:if="{{!userInfo || userRole == 'visitor'}}">
+    <view class="content-wrapper">
+      <!-- Banner -->
+      <view class="banner-container" wx:if="{{banners.length > 0}}">
+          <swiper 
+            class="banner-swiper" 
+            indicator-dots="{{banners.length > 1}}" 
+            autoplay="true" 
+            interval="3000" 
+            duration="500" 
+            circular="{{banners.length > 1}}"
+          >
+            <swiper-item wx:for="{{banners}}" wx:key="id">
+              <image class="banner-image" src="{{item.image_url}}" mode="aspectFill" binderror="onBannerError"></image>
+            </swiper-item>
+          </swiper>
+      </view>
+
+    <!-- 课程体系介绍 -->
+    <view class="section">
+      <view class="section-title">课程体系介绍</view>
+      <view class="theme-grid">
+        <view class="theme-item {{item.status === 'inactive' ? 'theme-item-inactive' : ''}}" wx:for="{{modules}}" wx:key="id" bindtap="viewModule" data-id="{{item.id}}">
+          <view class="theme-icon {{item.status === 'inactive' ? 'theme-icon-inactive' : ''}}" style="background-color: {{item.status === 'inactive' ? '#e0e0e0' : item.color}};">
+            <text class="icon-text">{{item.icon}}</text>
+          </view>
+          <view class="theme-title {{item.status === 'inactive' ? 'theme-title-inactive' : ''}}">{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 热门教练 -->
+    <view class="section" wx:if="{{popularInstructors.length > 0}}">
+      <view class="section-title">热门教练</view>
+      <scroll-view class="instructors-scroll" scroll-x="true">
+        <view class="instructor-list">
+          <view class="instructor-card" wx:for="{{popularInstructors}}" wx:key="id" bindtap="viewInstructorProfile" data-id="{{item.id}}">
+            <view class="instructor-avatar-wrapper">
+              <image class="instructor-avatar" src="{{item.avatar_url || '/images/头像.png'}}" mode="aspectFill"></image>
+            </view>
+            <view class="instructor-info">
+              <view class="instructor-name">{{item.display_name}}</view>
+              <view class="instructor-stats">
+                <text class="stat-item">课程 {{item.course_count || 0}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+      <!-- 底部提示 -->
+      <view class="footer-tip">
+        <text>登录成为会员即可预订课程、评价课程、邀请好友等</text>
+        <button class="register-btn" bindtap="showRegisterModal">注册会员</button>
+      </view>
+    </view>
+  </block>
+
+  <!-- 会员首页 -->
+  <block wx:if="{{userInfo && userRole == 'member'}}">
+    <view class="content-wrapper">
+      <!-- 顶部欢迎区域 -->
+      <view class="member-header-card">
+        <view class="user-info">
+          <view class="user-avatar">
+            <image wx:if="{{userInfo.avatar_url}}" src="{{userInfo.avatar_url}}" mode="aspectFill"></image>
+            <image wx:else src="/images/头像.png" mode="aspectFill"></image>
+          </view>
+          <view class="user-text">
+            <view class="welcome-text">欢迎回来</view>
+            <view class="user-name">{{userInfo.nickname || userInfo.real_name || '会员'}}</view>
+            <view class="subtitle-text">开启您的专属学习之旅</view>
+          </view>
+        </view>
+        <view class="listen-btn-wrapper">
+          <view class="listen-btn {{isListenBtnPressed ? 'pressed' : ''}}" 
+                bindtouchstart="onListenBtnTouchStart"
+                bindtouchend="onListenBtnTouchEnd"
+                bindtap="goToCourseIntention">
+            <view class="listen-icon-wrapper">
+              <text class="listen-icon">👂</text>
+            </view>
+            <text class="listen-text">倾听</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 课券余额卡片 -->
+      <view class="ticket-card" bindtap="goToTickets">
+        <view class="ticket-left">
+          <view class="ticket-icon-wrapper">
+            <text class="ticket-icon">🎫</text>
+          </view>
+          <view class="ticket-info">
+            <view class="ticket-count">{{ticketCount || 0}}</view>
+            <view class="ticket-label">课券余额</view>
+          </view>
+        </view>
+        <view class="ticket-link">查看详情 ></view>
+      </view>
+
+    <!-- 已预订课程 -->
+    <view class="section-card">
+      <view class="section-header">
+        <view class="section-title">已预订课程</view>
+        <text class="section-link" bindtap="goToMyBookings">查看全部 ></text>
+      </view>
+      <block wx:if="{{bookedCourses.length > 0}}">
+        <scroll-view class="booked-courses-scroll" scroll-x="true">
+          <view class="booked-course-card" wx:for="{{bookedCourses}}" wx:key="booking_id" bindtap="viewCourseDetail" data-id="{{item.course_id}}">
+            <view class="course-card-content">
+              <view class="course-card-title">{{item.title}}</view>
+              <view class="course-card-info">
+                <text class="info-icon">👤</text>
+                <text class="info-value">{{item.instructor_name}}</text>
+              </view>
+              <view class="course-card-info">
+                <text class="info-icon">🕐</text>
+                <text class="info-value">{{item.date_time_text}}</text>
+              </view>
+              <view class="course-card-info">
+                <text class="info-icon blue">👥</text>
+                <text class="info-value blue">{{item.current_students}}/{{item.max_students}} 人</text>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </block>
+      <block wx:else>
+        <view class="empty-state">
+          <text class="empty-text">你还没有预订课程~</text>
+          <text class="empty-hint">去看看课程表吧</text>
+          <button class="btn-primary" bindtap="goToSchedule">查看课程表</button>
+        </view>
+      </block>
+    </view>
+
+    <!-- 待签到打卡 -->
+    <view class="section-card" wx:if="{{pendingCheckins.length > 0}}">
+      <view class="evaluation-card" bindtap="goToCheckin">
+        <view class="evaluation-icon-wrapper">
+          <text class="evaluation-icon">✓</text>
+        </view>
+        <view class="evaluation-content">
+          <view class="evaluation-title">待签到打卡</view>
+          <view class="evaluation-tags">
+            <text class="evaluation-tag" wx:for="{{pendingCheckins}}" wx:key="booking_id">{{item.title}}</text>
+          </view>
+        </view>
+        <view class="evaluation-link">去签到 ></view>
+      </view>
+    </view>
+
+    <!-- 待评价课程 -->
+    <view class="section-card" wx:if="{{pendingEvaluations.length > 0}}">
+      <view class="evaluation-card" bindtap="goToEvaluation">
+        <view class="evaluation-icon-wrapper">
+          <text class="evaluation-icon">⭐</text>
+        </view>
+        <view class="evaluation-content">
+          <view class="evaluation-title">待评价课程</view>
+          <view class="evaluation-tags">
+            <text class="evaluation-tag" wx:for="{{pendingEvaluations}}" wx:key="id">{{item.title}}</text>
+          </view>
+        </view>
+        <view class="evaluation-link">去评价 ></view>
+      </view>
+    </view>
+
+    <!-- 优惠券奖励 -->
+    <view class="section-card">
+      <view class="coupon-reward-card" bindtap="goToDiscountCoupons">
+        <view class="coupon-reward-icon-wrapper">
+          <text class="coupon-reward-icon">🎫</text>
+        </view>
+        <view class="coupon-reward-content">
+          <view class="coupon-reward-title">优惠券奖励</view>
+          <view class="coupon-reward-amount">¥{{utils.formatAmount(couponStats.unused_amount || 0)}}</view>
+        </view>
+        <view class="coupon-reward-link">查看详情 ></view>
+      </view>
+    </view>
+
+    <!-- 邀请专区 -->
+    <view class="section-card">
+      <view class="invite-zone-card" bindtap="goToInvitation">
+        <view class="invite-zone-icon-wrapper">
+          <text class="invite-zone-icon">🎁</text>
+        </view>
+        <view class="invite-zone-content">
+          <view class="invite-zone-title">邀请专区</view>
+          <view class="invite-zone-subtitle">邀请好友注册，获得优惠券奖励</view>
+        </view>
+        <view class="invite-zone-link">查看详情 ></view>
+      </view>
+    </view>
+
+    <!-- 系统消息 -->
+    <view class="section-card">
+      <view class="section-header">
+        <view class="section-title">系统消息</view>
+        <text class="section-link" bindtap="goToMessages">查看全部 ></text>
+      </view>
+      <view class="message-list">
+        <view class="message-item" wx:for="{{systemMessages}}" wx:key="id" bindtap="viewMessage" data-id="{{item.id}}">
+          <view class="message-icon-wrapper">
+            <text class="message-icon">🔔</text>
+          </view>
+          <view class="message-content">
+            <view class="message-title">{{item.title}}</view>
+            <view class="message-time">{{item.created_at}}</view>
+          </view>
+        </view>
+        <view wx:if="{{systemMessages.length === 0}}" class="empty-message">
+          <text class="empty-message-text">暂无系统消息</text>
+        </view>
+      </view>
+    </view>
+
+      <!-- 退出登录按钮 -->
+      <view class="logout-section">
+        <button class="logout-btn" bindtap="handleLogout">
+          <text class="logout-text">退出登录</text>
+        </button>
+      </view>
+    </view>
+  </block>
+
+  <!-- 教练首页（与会员首页一致） -->
+  <block wx:if="{{userInfo && userRole == 'instructor'}}">
+    <view class="content-wrapper">
+      <!-- 顶部欢迎区域 -->
+      <view class="member-header-card">
+        <view class="user-info">
+          <view class="user-avatar">
+            <image wx:if="{{userInfo.avatar_url}}" src="{{userInfo.avatar_url}}" mode="aspectFill"></image>
+            <image wx:else src="/images/头像.png" mode="aspectFill"></image>
+          </view>
+          <view class="user-text">
+            <view class="welcome-text">欢迎回来</view>
+            <view class="user-name">{{userInfo.nickname || userInfo.real_name || '教练'}}</view>
+            <view class="subtitle-text">开启您的专属学习之旅</view>
+          </view>
+        </view>
+        <view class="listen-btn-wrapper">
+          <view class="listen-btn {{isListenBtnPressed ? 'pressed' : ''}}" 
+                bindtouchstart="onListenBtnTouchStart"
+                bindtouchend="onListenBtnTouchEnd"
+                bindtap="goToCourseIntention">
+            <view class="listen-icon-wrapper">
+              <text class="listen-icon">👂</text>
+            </view>
+            <text class="listen-text">倾听</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 课券余额卡片 -->
+      <view class="ticket-card" bindtap="goToTickets">
+        <view class="ticket-left">
+          <view class="ticket-icon-wrapper">
+            <text class="ticket-icon">🎫</text>
+          </view>
+          <view class="ticket-info">
+            <view class="ticket-count">{{ticketCount || 0}}</view>
+            <view class="ticket-label">课券余额</view>
+          </view>
+        </view>
+        <view class="ticket-link">查看详情 ></view>
+      </view>
+
+    <!-- 已预订课程 -->
+    <view class="section-card">
+      <view class="section-header">
+        <view class="section-title">已预订课程</view>
+        <text class="section-link" bindtap="goToMyBookings">查看全部 ></text>
+      </view>
+      <block wx:if="{{bookedCourses.length > 0}}">
+        <scroll-view class="booked-courses-scroll" scroll-x="true">
+          <view class="booked-course-card" wx:for="{{bookedCourses}}" wx:key="booking_id" bindtap="viewCourseDetail" data-id="{{item.course_id}}">
+            <view class="course-card-content">
+              <view class="course-card-title">{{item.title}}</view>
+              <view class="course-card-info">
+                <text class="info-icon">👤</text>
+                <text class="info-value">{{item.instructor_name}}</text>
+              </view>
+              <view class="course-card-info">
+                <text class="info-icon">🕐</text>
+                <text class="info-value">{{item.date_time_text}}</text>
+              </view>
+              <view class="course-card-info">
+                <text class="info-icon blue">👥</text>
+                <text class="info-value blue">{{item.current_students}}/{{item.max_students}} 人</text>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </block>
+      <block wx:else>
+        <view class="empty-state">
+          <text class="empty-text">你还没有预订课程~</text>
+          <text class="empty-hint">去看看课程表吧</text>
+          <button class="btn-primary" bindtap="goToSchedule">查看课程表</button>
+        </view>
+      </block>
+    </view>
+
+    <!-- 待评价课程（过滤掉自己的课程） -->
+    <view class="section-card" wx:if="{{pendingEvaluations.length > 0}}">
+      <view class="evaluation-card" bindtap="goToEvaluation">
+        <view class="evaluation-icon-wrapper">
+          <text class="evaluation-icon">⭐</text>
+        </view>
+        <view class="evaluation-content">
+          <view class="evaluation-title">待评价课程</view>
+          <view class="evaluation-tags">
+            <text class="evaluation-tag" wx:for="{{pendingEvaluations}}" wx:key="id">{{item.title}}</text>
+          </view>
+        </view>
+        <view class="evaluation-link">去评价 ></view>
+      </view>
+    </view>
+
+    <!-- 优惠券奖励 -->
+    <view class="section-card">
+      <view class="coupon-reward-card" bindtap="goToDiscountCoupons">
+        <view class="coupon-reward-icon-wrapper">
+          <text class="coupon-reward-icon">🎫</text>
+        </view>
+        <view class="coupon-reward-content">
+          <view class="coupon-reward-title">优惠券奖励</view>
+          <view class="coupon-reward-amount">¥{{utils.formatAmount(couponStats.unused_amount || 0)}}</view>
+        </view>
+        <view class="coupon-reward-link">查看详情 ></view>
+      </view>
+    </view>
+
+    <!-- 邀请专区 -->
+    <view class="section-card">
+      <view class="invite-zone-card" bindtap="goToInvitation">
+        <view class="invite-zone-icon-wrapper">
+          <text class="invite-zone-icon">🎁</text>
+        </view>
+        <view class="invite-zone-content">
+          <view class="invite-zone-title">邀请专区</view>
+          <view class="invite-zone-subtitle">邀请好友注册，获得优惠券奖励</view>
+        </view>
+        <view class="invite-zone-link">查看详情 ></view>
+      </view>
+    </view>
+
+    <!-- 系统消息 -->
+    <view class="section-card">
+      <view class="section-header">
+        <view class="section-title">系统消息</view>
+        <text class="section-link" bindtap="goToMessages">查看全部 ></text>
+      </view>
+      <view class="message-list">
+        <view class="message-item" wx:for="{{systemMessages}}" wx:key="id" bindtap="viewMessage" data-id="{{item.id}}">
+          <view class="message-icon-wrapper">
+            <text class="message-icon">🔔</text>
+          </view>
+          <view class="message-content">
+            <view class="message-title">{{item.title}}</view>
+            <view class="message-time">{{item.created_at}}</view>
+          </view>
+        </view>
+        <view wx:if="{{systemMessages.length === 0}}" class="empty-message">
+          <text class="empty-message-text">暂无系统消息</text>
+        </view>
+      </view>
+    </view>
+
+      <!-- 退出登录按钮 -->
+      <view class="logout-section">
+        <button class="logout-btn" bindtap="handleLogout">
+          <text class="logout-text">退出登录</text>
+        </button>
+      </view>
+    </view>
+  </block>
+</view>

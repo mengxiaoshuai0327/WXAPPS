@@ -1,0 +1,39 @@
+<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 奖杯底座 -->
+  <path d="M7 21H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <!-- 奖杯左把手 -->
+  <path d="M7 21C7 18.2386 9.23858 16 12 16C14.7614 16 17 18.2386 17 21" stroke="currentColor" stroke-width="2" fill="none"/>
+  <!-- 奖杯主体 -->
+  <path d="M8 8V6C8 4.89543 8.89543 4 10 4H14C15.1046 4 16 4.89543 16 6V8H17C18.1046 8 19 8.89543 19 10V13C19 14.6569 17.6569 16 16 16H8C6.34315 16 5 14.6569 5 13V10C5 8.89543 5.89543 8 7 8H8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 星星装饰 -->
+  <path d="M12 8L12.5 9.5L14 10L12.5 10.5L12 12L11.5 10.5L10 10L11.5 9.5L12 8Z" fill="currentColor"/>
+</svg>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

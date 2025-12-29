@@ -1,0 +1,39 @@
+<!--pages/badges/badges.wxml-->
+<view class="container">
+  <view class="badge-header">
+    <view class="badge-title">邀请达人徽章</view>
+    <view class="badge-level" wx:if="{{badgeLevel}}">
+      <text class="level-text">{{badgeLevel}}</text>
+    </view>
+  </view>
+
+  <view class="badge-info">
+    <view class="info-item">
+      <text class="info-label">邀请人数</text>
+      <text class="info-value">{{inviteCount}}人</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">徽章等级</text>
+      <text class="info-value">{{badgeLevel || '暂无'}}</text>
+    </view>
+  </view>
+
+  <view class="invitees-section" wx:if="{{invitees.length > 0}}">
+    <view class="section-title">被邀请人列表</view>
+    <view class="invitee-list">
+      <view class="invitee-item" wx:for="{{invitees}}" wx:key="id">
+        <view class="invitee-avatar">
+          <text class="avatar-text">{{item.nickname ? item.nickname[0] : 'U'}}</text>
+        </view>
+        <view class="invitee-info">
+          <view class="invitee-name">{{item.nickname || '未设置昵称'}}</view>
+          <view class="invitee-time">加入时间：{{item.registered_at_formatted}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{invitees.length === 0}}" class="empty-state">
+    <text>暂无被邀请人</text>
+  </view>
+</view>

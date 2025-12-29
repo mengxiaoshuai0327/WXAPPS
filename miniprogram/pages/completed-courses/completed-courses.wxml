@@ -1,0 +1,83 @@
+<!--pages/completed-courses/completed-courses.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="header-title">已上课程</view>
+  </view>
+
+  <view class="courses-list" wx:if="{{courses.length > 0}}">
+    <view class="course-item" wx:for="{{courses}}" wx:key="id">
+      <!-- 课程基本信息（可点击展开） -->
+      <view class="course-header" bindtap="toggleCourse" data-id="{{item.id}}">
+        <view class="course-content">
+          <view class="course-title">{{item.title}}</view>
+          <view class="course-info">
+            <text class="info-label">教练：</text>
+            <text class="info-value">{{item.instructor_name}}</text>
+          </view>
+          <view class="course-info">
+            <text class="info-label">上课时间：</text>
+            <text class="info-value">{{item.date_time_text}}</text>
+          </view>
+          <view class="course-status" wx:if="{{item.evaluation_status === 'pending'}}">
+            <text class="status-text">待评价</text>
+          </view>
+          <view class="course-status" wx:else>
+            <text class="status-text evaluated">已评价</text>
+          </view>
+        </view>
+        <view class="expand-icon">
+          <text class="icon-arrow {{expandedCourses[item.id] ? 'expanded' : ''}}">▼</text>
+        </view>
+      </view>
+
+      <!-- 展开后的明细信息 -->
+      <view class="course-details" wx:if="{{expandedCourses[item.id]}}">
+        <!-- 课程明细 -->
+        <view class="detail-section">
+          <view class="section-title">课程明细</view>
+          <view class="detail-item" wx:if="{{item.course_code}}">
+            <text class="detail-label">课程编号：</text>
+            <text class="detail-value">{{item.course_code}}</text>
+          </view>
+          <view class="detail-item" wx:if="{{item.subtitle}}">
+            <text class="detail-label">课程副标题：</text>
+            <text class="detail-value">{{item.subtitle}}</text>
+          </view>
+          <view class="detail-item">
+            <text class="detail-label">报名人数：</text>
+            <text class="detail-value">{{item.current_students}}/{{item.max_students}} 人</text>
+          </view>
+          <view class="detail-item" wx:if="{{item.booked_at_formatted}}">
+            <text class="detail-label">预订时间：</text>
+            <text class="detail-value">{{item.booked_at_formatted}}</text>
+          </view>
+          <view class="detail-action">
+            <text class="action-link" catchtap="viewCourseDetail" data-course-id="{{item.course_id}}">查看课程详情 ></text>
+          </view>
+        </view>
+
+        <!-- 用券明细 -->
+        <view class="detail-section">
+          <view class="section-title">用券明细</view>
+          <view class="detail-item" wx:if="{{item.ticket_code}}">
+            <text class="detail-label">课券编号：</text>
+            <text class="detail-value">{{item.ticket_code}}</text>
+          </view>
+          <view class="detail-item" wx:if="{{item.ticket_used_at_formatted}}">
+            <text class="detail-label">用券时间：</text>
+            <text class="detail-value">{{item.ticket_used_at_formatted}}</text>
+          </view>
+          <view class="detail-item" wx:if="{{!item.ticket_code}}">
+            <text class="detail-value">未使用课券</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{courses.length === 0 && !loading}}" class="empty-state">
+    <text>暂无已上课程</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+</view>

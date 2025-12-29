@@ -1,0 +1,118 @@
+<!--pages/course-intention/course-intention.wxml-->
+<view class="container">
+  <view class="form-container">
+    <!-- 页面标题说明 -->
+    <view class="header-section">
+      <view class="header-title">课程意向问卷</view>
+      <view class="header-desc">告诉我们您想听的课程，帮助我们更好地为您服务</view>
+    </view>
+
+    <!-- 选择想听的主题 -->
+    <view class="form-section">
+      <view class="section-title">您还想听小程序中哪些主题？（可多选）</view>
+      <view class="section-hint">请选择您感兴趣的主题</view>
+      <checkbox-group bindchange="onThemeChange">
+        <view class="checkbox-item" wx:for="{{themes}}" wx:key="id">
+          <checkbox value="{{item.id}}" checked="{{item.checked}}" color="#667eea" />
+          <text class="checkbox-label" bindtap="toggleTheme" data-id="{{item.id}}">{{item.name}}</text>
+        </view>
+      </checkbox-group>
+      <view wx:if="{{themes.length === 0}}" class="empty-hint">暂无主题</view>
+    </view>
+
+    <!-- 选择想听的课程 -->
+    <view class="form-section">
+      <view class="section-title">您还想听小程序中哪些课程？（可多选）</view>
+      <view class="section-hint">请选择您想听的课程</view>
+      <checkbox-group bindchange="onCourseChange">
+        <view class="checkbox-item" wx:for="{{courses}}" wx:key="id">
+          <checkbox value="{{item.id}}" checked="{{item.checked}}" color="#667eea" />
+          <view class="checkbox-label-wrapper" bindtap="toggleCourse" data-id="{{item.id}}">
+            <text class="checkbox-label">{{item.title}}</text>
+            <text wx:if="{{item.instructor_name}}" class="checkbox-subtitle">{{item.instructor_name}}</text>
+          </view>
+        </view>
+      </checkbox-group>
+      <view wx:if="{{courses.length === 0}}" class="empty-hint">暂无课程</view>
+    </view>
+
+    <!-- 其他课程描述 -->
+    <view class="form-section">
+      <view class="section-title">其他课程描述</view>
+      <view class="section-hint">如果小程序中没有您想听的主题和课程，请在这里描述一下您想听的内容</view>
+      <textarea 
+        class="textarea-input" 
+        placeholder="请描述您想听的课程内容、主题、期望学习的内容等..."
+        value="{{otherCourses}}"
+        bindinput="onOtherCoursesInput"
+        maxlength="500"
+        show-confirm-bar="{{false}}"
+      ></textarea>
+      <view class="char-count">{{otherCourses.length}}/500</view>
+    </view>
+
+    <!-- 期望上课时间 -->
+    <view class="form-section">
+      <view class="section-title">您有意向上课的时间</view>
+      <view class="section-hint">请告诉我们您希望的上课时间安排</view>
+      <input 
+        class="text-input" 
+        type="text" 
+        placeholder="例如：工作日晚上19:00-21:00、周末上午、每月第一个周六等"
+        value="{{preferredTime}}"
+        bindinput="onPreferredTimeInput"
+      />
+    </view>
+
+    <!-- 意向老师 -->
+    <view class="form-section">
+      <view class="section-title">您意向的老师</view>
+      <view class="section-hint">可以选择现有老师，或输入其他老师姓名</view>
+      
+      <!-- 从列表中选择 -->
+      <view class="picker-wrapper">
+        <picker 
+          mode="selector" 
+          range="{{instructors}}" 
+          range-key="displayName"
+          value="{{preferredInstructorIndex}}"
+          bindchange="onInstructorChange"
+        >
+          <view class="picker-view">
+            <text class="picker-text {{preferredInstructorId ? '' : 'placeholder'}}">{{preferredInstructorDisplayName}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 或者输入其他老师姓名 -->
+      <view class="input-wrapper">
+        <input 
+          class="text-input" 
+          type="text" 
+          placeholder="或输入其他老师的姓名（如果不在列表中）"
+          value="{{preferredInstructorName}}"
+          bindinput="onInstructorNameInput"
+        />
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-section">
+      <button 
+        class="submit-btn" 
+        bindtap="submit"
+        disabled="{{submitting}}"
+        loading="{{submitting}}"
+      >
+        {{submitting ? '提交中...' : '提交'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-mask">
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>
+

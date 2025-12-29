@@ -1,0 +1,266 @@
+<!--pages/ticket-detail/ticket-detail.wxml-->
+<wxs module="utils">
+  function calculateDiscount(purchaseAmount, actualAmount) {
+    var purchase = parseFloat(purchaseAmount || 0);
+    var actual = parseFloat(actualAmount || 0);
+    var discount = purchase - actual;
+    if (isNaN(discount) || discount <= 0) return 0;
+    return discount.toFixed(2);
+  }
+  module.exports.calculateDiscount = calculateDiscount;
+</wxs>
+<view class="container">
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 错误提示 -->
+  <view wx:elif="{{error}}" class="error-container">
+    <text class="error-text">{{error}}</text>
+    <button class="retry-btn" bindtap="loadTicketDetail">重试</button>
+  </view>
+
+  <!-- 课券详情 -->
+  <view wx:elif="{{ticketInfo}}" class="ticket-detail">
+    <!-- 课券编号 -->
+    <view class="ticket-header">
+      <view class="ticket-code-label">课券编号</view>
+      <view class="ticket-code-value">{{ticketInfo.ticket_code}}</view>
+      <view class="ticket-status status-{{ticketInfo.status}}">{{ticketInfo.status_text}}</view>
+    </view>
+
+    <!-- 基本信息 -->
+    <view class="info-section">
+      <view class="section-title">基本信息</view>
+      
+      <view class="info-item">
+        <text class="info-label">获得方式：</text>
+        <text class="info-value">{{ticketInfo.source_text || '未知'}}</text>
+      </view>
+
+      <view class="info-item">
+        <text class="info-label">购买时间：</text>
+        <text class="info-value">{{ticketInfo.purchased_at_formatted || '暂无'}}</text>
+      </view>
+
+      <view class="info-item">
+        <text class="info-label">有效期：</text>
+        <text class="info-value">{{ticketInfo.validity_period || ticketInfo.expiry_date_range || '暂无有效期'}}</text>
+      </view>
+
+      <view class="info-item" wx:if="{{ticketInfo.used_at_formatted}}">
+        <text class="info-label">使用时间：</text>
+        <text class="info-value">{{ticketInfo.used_at_formatted}}</text>
+      </view>
+
+      <view class="info-item" wx:if="{{ticketInfo.purchase_amount}}">
+        <text class="info-label">购买金额：</text>
+        <text class="info-value">¥{{ticketInfo.purchase_amount}}</text>
+      </view>
+
+      <view class="info-item" wx:if="{{ticketInfo.actual_amount}}">
+        <text class="info-label">实际支付：</text>
+        <text class="info-value">¥{{ticketInfo.actual_amount}}</text>
+      </view>
+
+      <!-- 优惠券信息 -->
+      <view class="info-item coupon-info-item" wx:if="{{ticketInfo.discount_coupon_id || (ticketInfo.purchase_amount && ticketInfo.actual_amount && (ticketInfo.purchase_amount - ticketInfo.actual_amount > 0))}}">
+        <text class="info-label">使用优惠券：</text>
+        <view class="coupon-info-wrapper">
+          <text class="coupon-amount" wx:if="{{ticketInfo.coupon_info && ticketInfo.coupon_info.amount && ticketInfo.coupon_info.amount > 0}}">-¥{{ticketInfo.coupon_info.amount}}</text>
+          <text class="coupon-amount" wx:elif="{{ticketInfo.purchase_amount && ticketInfo.actual_amount}}">-¥{{utils.calculateDiscount(ticketInfo.purchase_amount, ticketInfo.actual_amount)}}</text>
+          <view class="coupon-detail" wx:if="{{ticketInfo.coupon_info && ticketInfo.coupon_info.source_text}}">
+            <text class="coupon-source">{{ticketInfo.coupon_info.source_text}}</text>
+            <text class="coupon-code" wx:if="{{ticketInfo.coupon_info.discount_code}}">（{{ticketInfo.coupon_info.discount_code}}）</text>
+          </view>
+          <view class="coupon-detail" wx:if="{{ticketInfo.coupon_info && ticketInfo.coupon_info.channel_name}}">
+            <text class="coupon-channel">来源渠道：{{ticketInfo.coupon_info.channel_name}}</text>
+            <text class="coupon-sales" wx:if="{{ticketInfo.coupon_info.channel_sales_name}}">（{{ticketInfo.coupon_info.channel_sales_name}}）</text>
+          </view>
+          <view class="coupon-detail" wx:if="{{ticketInfo.coupon_info && ticketInfo.coupon_info.instructor_name}}">
+            <text class="coupon-instructor">来源教练：{{ticketInfo.coupon_info.instructor_name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 使用限制（仅他人赠送的课券显示） -->
+      <view wx:if="{{ticketInfo.source === 'gift'}}" class="restrictions-section">
+        <view class="restrictions-title">使用限制</view>
+        <view class="restrictions-content">
+          <view wx:if="{{ticketInfo.restrictions && (ticketInfo.restrictions.module_name || ticketInfo.restrictions.theme_name || ticketInfo.restrictions.course_name)}}">
+            <view class="restriction-item" wx:if="{{ticketInfo.restrictions.module_name}}">
+              <text class="restriction-label">限定模块：</text>
+              <text class="restriction-value">{{ticketInfo.restrictions.module_name}}</text>
+            </view>
+            <view class="restriction-item" wx:if="{{ticketInfo.restrictions.theme_name}}">
+              <text class="restriction-label">限定主题：</text>
+              <text class="restriction-value">{{ticketInfo.restrictions.theme_name}}</text>
+            </view>
+            <view class="restriction-item" wx:if="{{ticketInfo.restrictions.course_name}}">
+              <text class="restriction-label">限定课程：</text>
+              <text class="restriction-value">{{ticketInfo.restrictions.course_name}}</text>
+            </view>
+          </view>
+          <view wx:else>
+            <text class="restriction-note">无限制，可用于预订任意课程</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 课程信息（已预订或已使用状态） -->
+    <view class="info-section" wx:if="{{ticketInfo.course_info}}">
+      <view class="section-title">课程信息</view>
+      
+      <view class="course-card" bindtap="viewCourseDetail">
+        <view class="course-title">{{ticketInfo.course_info.course_title}}</view>
+        <view class="course-subtitle" wx:if="{{ticketInfo.course_info.course_subtitle}}">
+          {{ticketInfo.course_info.course_subtitle}}
+        </view>
+        
+        <view class="course-info-row">
+          <text class="info-label">主题：</text>
+          <text class="info-value">{{ticketInfo.course_info.theme_name}}</text>
+        </view>
+
+        <view class="course-info-row">
+          <text class="info-label">教练：</text>
+          <text class="info-value">{{ticketInfo.course_info.instructor_name}}</text>
+        </view>
+
+        <view class="course-info-row">
+          <text class="info-label">上课时间：</text>
+          <text class="info-value">{{ticketInfo.course_info.date_time_text}}</text>
+        </view>
+
+        <view class="course-info-row">
+          <text class="info-label">人数：</text>
+          <text class="info-value">{{ticketInfo.course_info.current_students}}/{{ticketInfo.course_info.max_students}} 人</text>
+        </view>
+
+        <view class="course-info-row" wx:if="{{ticketInfo.course_info.booked_at}}">
+          <text class="info-label">预订时间：</text>
+          <text class="info-value">{{ticketInfo.course_info.booked_at}}</text>
+        </view>
+
+        <view class="view-course-link">查看课程详情 ></view>
+      </view>
+    </view>
+
+    <!-- 赠予信息（他人赠送的课券 - 受赠人查看） -->
+    <view class="info-section" wx:if="{{ticketInfo.giver_info}}">
+      <view class="section-title">赠予信息</view>
+      
+      <view class="info-item">
+        <text class="info-label">赠予人：</text>
+        <text class="info-value">{{ticketInfo.giver_info.nickname || '未知'}}</text>
+      </view>
+
+      <view class="info-item" wx:if="{{ticketInfo.giver_info.member_id}}">
+        <text class="info-label">会员编号：</text>
+        <text class="info-value">{{ticketInfo.giver_info.member_id}}</text>
+      </view>
+
+      <view class="info-item" wx:if="{{ticketInfo.gifted_at_formatted}}">
+        <text class="info-label">赠予时间：</text>
+        <text class="info-value">{{ticketInfo.gifted_at_formatted}}</text>
+      </view>
+    </view>
+
+    <!-- 受赠人信息（已赠予状态 - 赠送人查看） -->
+    <view class="info-section" wx:if="{{ticketInfo.status === 'gifted' && ticketInfo.receiver_info}}">
+      <view class="section-title">受赠人信息</view>
+      
+      <view class="info-item">
+        <text class="info-label">受赠人：</text>
+        <text class="info-value">{{ticketInfo.receiver_info.name || ticketInfo.receiver_info.real_name || ticketInfo.receiver_info.nickname || '未知'}}</text>
+      </view>
+
+      <view class="info-item" wx:if="{{ticketInfo.receiver_info.member_id}}">
+        <text class="info-label">会员编号：</text>
+        <text class="info-value">{{ticketInfo.receiver_info.member_id}}</text>
+      </view>
+
+      <view class="info-item" wx:if="{{ticketInfo.gifted_at_formatted}}">
+        <text class="info-label">赠予时间：</text>
+        <text class="info-value">{{ticketInfo.gifted_at_formatted}}</text>
+      </view>
+
+      <!-- 受赠人课券使用状态 -->
+      <view class="info-item" wx:if="{{ticketInfo.gift_status}}">
+        <text class="info-label">使用状态：</text>
+        <text class="info-value">
+          <text wx:if="{{ticketInfo.gift_status === 'unused'}}">未使用</text>
+          <text wx:elif="{{ticketInfo.gift_status === 'booked'}}">已预订</text>
+          <text wx:elif="{{ticketInfo.gift_status === 'used'}}">已使用</text>
+          <text wx:elif="{{ticketInfo.gift_status === 'expired'}}">已过期</text>
+          <text wx:else>{{ticketInfo.gift_status}}</text>
+        </text>
+      </view>
+
+      <!-- 受赠人课券使用时间（如果已使用） -->
+      <view class="info-item" wx:if="{{ticketInfo.gift_used_at_formatted}}">
+        <text class="info-label">使用时间：</text>
+        <text class="info-value">{{ticketInfo.gift_used_at_formatted}}</text>
+      </view>
+    </view>
+
+    <!-- 受赠人课程信息（如果已使用或已预订） -->
+    <view class="info-section" wx:if="{{ticketInfo.gift_usage_info || ticketInfo.gift_booking_info}}">
+      <view class="section-title">受赠人课程信息</view>
+      
+      <!-- 已使用的课程信息 -->
+      <view wx:if="{{ticketInfo.gift_usage_info}}" class="course-card">
+        <view class="course-title">{{ticketInfo.gift_usage_info.course_title}}</view>
+        <view class="course-subtitle" wx:if="{{ticketInfo.gift_usage_info.course_subtitle}}">
+          {{ticketInfo.gift_usage_info.course_subtitle}}
+        </view>
+        
+        <view class="course-info-row" wx:if="{{ticketInfo.gift_usage_info.theme_name}}">
+          <text class="info-label">主题：</text>
+          <text class="info-value">{{ticketInfo.gift_usage_info.theme_name}}</text>
+        </view>
+
+        <view class="course-info-row" wx:if="{{ticketInfo.gift_usage_info.instructor_name}}">
+          <text class="info-label">教练：</text>
+          <text class="info-value">{{ticketInfo.gift_usage_info.instructor_name}}</text>
+        </view>
+
+        <view class="course-info-row" wx:if="{{ticketInfo.gift_usage_info.date_time_text}}">
+          <text class="info-label">上课时间：</text>
+          <text class="info-value">{{ticketInfo.gift_usage_info.date_time_text}}</text>
+        </view>
+      </view>
+
+      <!-- 已预订的课程信息 -->
+      <view wx:elif="{{ticketInfo.gift_booking_info}}" class="course-card">
+        <view class="course-title">{{ticketInfo.gift_booking_info.course_title}}</view>
+        <view class="course-subtitle" wx:if="{{ticketInfo.gift_booking_info.course_subtitle}}">
+          {{ticketInfo.gift_booking_info.course_subtitle}}
+        </view>
+        
+        <view class="course-info-row" wx:if="{{ticketInfo.gift_booking_info.theme_name}}">
+          <text class="info-label">主题：</text>
+          <text class="info-value">{{ticketInfo.gift_booking_info.theme_name}}</text>
+        </view>
+
+        <view class="course-info-row" wx:if="{{ticketInfo.gift_booking_info.instructor_name}}">
+          <text class="info-label">教练：</text>
+          <text class="info-value">{{ticketInfo.gift_booking_info.instructor_name}}</text>
+        </view>
+
+        <view class="course-info-row" wx:if="{{ticketInfo.gift_booking_info.date_time_text}}">
+          <text class="info-label">上课时间：</text>
+          <text class="info-value">{{ticketInfo.gift_booking_info.date_time_text}}</text>
+        </view>
+
+        <view class="course-info-row" wx:if="{{ticketInfo.gift_booking_info.booked_at_formatted}}">
+          <text class="info-label">预订时间：</text>
+          <text class="info-value">{{ticketInfo.gift_booking_info.booked_at_formatted}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+

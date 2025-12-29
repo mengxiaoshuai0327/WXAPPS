@@ -1,0 +1,115 @@
+<!--pages/theme-detail/theme-detail.wxml-->
+<view class="container">
+  <!-- 顶部装饰 -->
+  <view class="top-decoration"></view>
+  
+  <view class="content-wrapper">
+    <!-- 主题信息卡片 -->
+    <view class="theme-info-card">
+      <view class="theme-header">
+        <view class="theme-icon-wrapper" style="background-color: {{themeColor}};">
+          <text class="theme-icon">{{themeIcon}}</text>
+        </view>
+        <view class="theme-title-wrapper">
+          <view class="theme-title">{{themeFullName ? themeFullName : themeName}}</view>
+          <view class="theme-module" wx:if="{{themeName}}">{{themeName}}</view>
+        </view>
+      </view>
+      <view class="theme-description" wx:if="{{themeDescription}}">
+        {{themeDescription}}
+      </view>
+    </view>
+
+    <!-- 排课列表 -->
+    <view class="schedule-list">
+      <view class="section-title">排课列表</view>
+      <view wx:if="{{loading}}" class="loading">加载中...</view>
+      <view wx:else>
+        <view wx:if="{{schedules.length > 0}}">
+          <view class="schedule-item" wx:for="{{schedules}}" wx:key="id">
+            <!-- 主体内容：左侧图片 + 右侧信息 -->
+            <view class="card-body">
+              <!-- 左侧图片：授课教师头像 -->
+              <view class="course-image">
+                <image 
+                  class="instructor-avatar" 
+                  src="{{item.instructor_avatar || '/images/头像.png'}}" 
+                  mode="aspectFill"
+                  lazy-load="true"
+                ></image>
+              </view>
+
+              <!-- 右侧内容 -->
+              <view class="course-content">
+                <!-- 课程标题 -->
+                <view class="course-title">{{item.title}}</view>
+
+                <!-- 讲师信息 -->
+                <view class="info-row">
+                  <text class="info-icon">👤</text>
+                  <text class="info-text">{{item.instructor_name}}</text>
+                </view>
+
+                <!-- 开课时间（待开课不显示） -->
+                <view class="info-row" wx:if="{{item.status !== 'draft' && item.date_time_text && item.date_time_text !== '待开课'}}">
+                  <text class="info-icon">🕐</text>
+                  <text class="info-text">开课时间: {{item.date_time_text}}</text>
+                </view>
+
+                <!-- 报名人数（待开课不显示） -->
+                <view class="info-row" wx:if="{{item.status !== 'draft'}}">
+                  <text class="info-icon blue">👥</text>
+                  <text class="info-text blue">{{item.current_students}}/{{item.max_students}}人</text>
+                </view>
+
+                <!-- 待开课状态显示 -->
+                <view class="info-row" wx:if="{{item.status === 'draft'}}">
+                  <text class="info-icon">📝</text>
+                  <text class="info-text">待开课</text>
+                </view>
+              </view>
+            </view>
+
+            <!-- 底部：位置和状态 -->
+            <view class="card-footer">
+              <!-- 地址信息单独一行 -->
+              <view class="location-row">
+                <!-- 游客显示"线下" -->
+                <view class="location-info" wx:if="{{userRole === 'visitor'}}">
+                  <text class="location-icon">📍</text>
+                  <text class="location-text">线下</text>
+                </view>
+                <!-- 会员/教练/渠道销售显示真实地址 -->
+                <view class="location-info" wx:elif="{{userRole === 'member' || userRole === 'instructor' || isChannelSales}}">
+                  <text class="location-icon">📍</text>
+                  <text class="location-text">{{item.location || '线下·教室'}}</text>
+                </view>
+                <!-- 其他情况（兜底） -->
+                <view class="location-info" wx:else>
+                  <text class="location-icon">📍</text>
+                  <text class="location-text">线下</text>
+                </view>
+              </view>
+              <!-- 操作按钮区域 -->
+              <view class="footer-actions">
+                <text wx:if="{{item.status === 'draft'}}" class="status-badge draft">待开课</text>
+                <text wx:elif="{{item.is_in_progress}}" class="status-badge in-progress">上课中</text>
+                <text wx:elif="{{item.is_past}}" class="status-badge">已结束</text>
+                <text wx:elif="{{item.current_students >= item.max_students}}" class="status-badge">已满员</text>
+                <button wx:elif="{{item.current_students < item.max_students}}" 
+                        class="btn-action btn-book" 
+                        bindtap="handleBook" 
+                        data-id="{{item.id}}">
+                  预订
+                </button>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view wx:else class="empty-state">
+          <text class="empty-text">暂无排课数据</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

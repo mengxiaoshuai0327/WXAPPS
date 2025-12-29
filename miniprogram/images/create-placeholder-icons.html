@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TabBar 图标占位生成器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        .icon-preview {
+            display: inline-block;
+            margin: 20px;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TabBar 图标占位生成器</h1>
+        <p>点击按钮生成图标，然后右键保存图片</p>
+        
+        <div id="icons"></div>
+    </div>
+
+    <script>
+        const icons = [
+            { name: 'home', text: '首页', symbol: '🏠' },
+            { name: 'schedule', text: '课程表', symbol: '📅' },
+            { name: 'ranking', text: '排行榜', symbol: '🏆' },
+            { name: 'profile', text: '我的', symbol: '👤' }
+        ];
+
+        function createIcon(name, text, symbol, isActive) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 81;
+            canvas.height = 81;
+            const ctx = canvas.getContext('2d');
+            
+            // 背景
+            ctx.fillStyle = isActive ? '#1a1a1a' : '#999999';
+            ctx.fillRect(0, 0, 81, 81);
+            
+            // 文字
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 40px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(symbol, 40, 40);
+            
+            return canvas;
+        }
+
+        icons.forEach(icon => {
+            const div = document.createElement('div');
+            div.className = 'icon-preview';
+            div.innerHTML = `<h3>${icon.text}</h3>`;
+            
+            // 未选中
+            const canvas1 = createIcon(icon.name, icon.text, icon.symbol, false);
+            const btn1 = document.createElement('button');
+            btn1.textContent = '下载未选中';
+            btn1.onclick = () => {
+                const link = document.createElement('a');
+                link.download = `${icon.name}.png`;
+                link.href = canvas1.toDataURL();
+                link.click();
+            };
+            div.appendChild(canvas1);
+            div.appendChild(btn1);
+            
+            // 选中
+            const canvas2 = createIcon(icon.name, icon.text, icon.symbol, true);
+            const btn2 = document.createElement('button');
+            btn2.textContent = '下载选中';
+            btn2.onclick = () => {
+                const link = document.createElement('a');
+                link.download = `${icon.name}-active.png`;
+                link.href = canvas2.toDataURL();
+                link.click();
+            };
+            div.appendChild(canvas2);
+            div.appendChild(btn2);
+            
+            document.getElementById('icons').appendChild(div);
+        });
+    </script>
+</body>
+</html>

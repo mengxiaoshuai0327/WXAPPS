@@ -1,0 +1,195 @@
+<!--pages/evaluation/submit/submit.wxml-->
+<wxs module="matrixHelper">
+  function getPickerValue(answers, questionId, rowId, matrixPickerValues) {
+    var key = questionId + '_' + rowId;
+    if (matrixPickerValues && matrixPickerValues[key] !== undefined) {
+      return matrixPickerValues[key];
+    }
+    if (answers && answers[questionId] && answers[questionId][rowId]) {
+      return 0; // 如果有答案但picker值未设置，返回0
+    }
+    return 0;
+  }
+  
+  function getPickerLabel(answers, questionId, rowId, matrixCols) {
+    if (!answers || !answers[questionId] || !answers[questionId][rowId]) {
+      return '';
+    }
+    if (!matrixCols || !matrixCols.length) {
+      return '';
+    }
+    var selectedValue = answers[questionId][rowId];
+    for (var i = 0; i < matrixCols.length; i++) {
+      if (matrixCols[i].value === selectedValue) {
+        return matrixCols[i].label;
+      }
+    }
+    return '';
+  }
+  
+  module.exports = {
+    getPickerValue: getPickerValue,
+    getPickerLabel: getPickerLabel
+  };
+</wxs>
+
+<view class="container">
+  <!-- 顶部装饰 -->
+  <view class="top-decoration"></view>
+  
+  <view class="content-wrapper">
+    <!-- 课程信息卡片 -->
+    <view class="course-info-card">
+      <view class="course-title">{{courseInfo.title}}</view>
+      <view class="course-meta">
+        <view class="meta-item" wx:if="{{courseInfo.schedule_date}}">
+          <view class="meta-icon-wrapper">
+            <text class="meta-icon">📅</text>
+          </view>
+          <view class="meta-content">
+            <text class="meta-label">课程日期</text>
+            <text class="meta-value">{{courseInfo.schedule_date}}<text wx:if="{{courseInfo.time_slot_text}}" style="margin-left: 8rpx;">{{courseInfo.time_slot_text}}</text></text>
+          </view>
+        </view>
+        <view class="meta-item" wx:if="{{courseInfo.instructor_name}}">
+          <view class="meta-icon-wrapper">
+            <text class="meta-icon">👨‍🏫</text>
+          </view>
+          <view class="meta-content">
+            <text class="meta-label">授课老师</text>
+            <text class="meta-value">{{courseInfo.instructor_name}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 评价表单 -->
+    <view class="evaluation-form" wx:if="{{questions && questions.length > 0 && !loading}}">
+      <view class="form-section" wx:for="{{questions}}" wx:key="id" wx:for-item="questionItem" wx:for-index="questionIndex">
+        <view class="question-card">
+          <view class="question-header">
+            <view class="question-number">{{questionIndex + 1}}</view>
+            <view class="section-title">
+              {{questionItem.text}}
+              <text class="required-mark" wx:if="{{questionItem.required}}">*</text>
+            </view>
+          </view>
+
+          <!-- 单选题 -->
+          <view wx:if="{{questionItem.type === 'single'}}" class="question-options">
+            <radio-group bindchange="onSingleSelect" data-question-id="{{questionItem.id}}">
+              <label class="option-item" wx:for="{{questionItem.options}}" wx:key="value" wx:for-item="option">
+                <view class="radio-wrapper">
+                  <radio value="{{option.value}}" checked="{{answers[questionItem.id] === option.value}}" color="#667eea" />
+                  <text class="option-text">{{option.label}}</text>
+                </view>
+              </label>
+            </radio-group>
+          </view>
+
+          <!-- 多选题 -->
+          <view wx:if="{{questionItem.type === 'multiple'}}" class="question-options">
+            <checkbox-group bindchange="onMultipleSelect" data-question-id="{{questionItem.id}}">
+              <label class="option-item" wx:for="{{questionItem.options}}" wx:key="value" wx:for-item="option">
+                <view class="checkbox-wrapper">
+                  <checkbox value="{{option.value}}" checked="{{answers[questionItem.id] && answers[questionItem.id].indexOf(option.value) > -1}}" color="#667eea" />
+                  <text class="option-text">{{option.label}}</text>
+                </view>
+              </label>
+            </checkbox-group>
+          </view>
+
+          <!-- 评分题 -->
+          <view wx:if="{{questionItem.type === 'rating'}}" class="rating-question">
+            <view class="rating-item" wx:for="{{questionItem.ratingItems}}" wx:key="id" wx:for-item="ratingItem">
+              <view class="rating-label">{{ratingItem.label}}</view>
+              <view class="rating-stars">
+                <text 
+                  class="star {{answers[questionItem.id] && answers[questionItem.id][ratingItem.id] >= 1 ? 'active' : ''}}" 
+                  bindtap="onRatingChange" 
+                  data-question-id="{{questionItem.id}}"
+                  data-item-id="{{ratingItem.id}}"
+                  data-rating="1">⭐</text>
+                <text 
+                  class="star {{answers[questionItem.id] && answers[questionItem.id][ratingItem.id] >= 2 ? 'active' : ''}}" 
+                  bindtap="onRatingChange" 
+                  data-question-id="{{questionItem.id}}"
+                  data-item-id="{{ratingItem.id}}"
+                  data-rating="2">⭐</text>
+                <text 
+                  class="star {{answers[questionItem.id] && answers[questionItem.id][ratingItem.id] >= 3 ? 'active' : ''}}" 
+                  bindtap="onRatingChange" 
+                  data-question-id="{{questionItem.id}}"
+                  data-item-id="{{ratingItem.id}}"
+                  data-rating="3">⭐</text>
+                <text 
+                  class="star {{answers[questionItem.id] && answers[questionItem.id][ratingItem.id] >= 4 ? 'active' : ''}}" 
+                  bindtap="onRatingChange" 
+                  data-question-id="{{questionItem.id}}"
+                  data-item-id="{{ratingItem.id}}"
+                  data-rating="4">⭐</text>
+                <text 
+                  class="star {{answers[questionItem.id] && answers[questionItem.id][ratingItem.id] >= 5 ? 'active' : ''}}" 
+                  bindtap="onRatingChange" 
+                  data-question-id="{{questionItem.id}}"
+                  data-item-id="{{ratingItem.id}}"
+                  data-rating="5">⭐</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 矩阵题 - 使用单选按钮样式 -->
+          <view wx:if="{{questionItem.type === 'matrix'}}" class="matrix-question">
+            <view class="matrix-select-list">
+              <view class="matrix-select-item" wx:for="{{questionItem.matrixRows}}" wx:key="id" wx:for-item="row" wx:for-index="rowIndex">
+                <view class="matrix-select-label">{{row.label}}</view>
+                <view wx:if="{{questionItem.matrixCols && questionItem.matrixCols.length > 0}}" class="matrix-options-wrapper">
+                  <radio-group bindchange="onMatrixSelect" data-question-id="{{questionItem.id}}" data-row-id="{{row.id}}">
+                    <label class="matrix-option-item" wx:for="{{questionItem.matrixCols}}" wx:key="value" wx:for-item="col" wx:for-index="colIndex">
+                      <view class="radio-wrapper">
+                        <radio 
+                          value="{{col.value || col.id || colIndex}}" 
+                          checked="{{answers[questionItem.id] && answers[questionItem.id][row.id] === (col.value || col.id || colIndex)}}"
+                          color="#667eea"
+                        />
+                        <text class="option-text">{{col.label}}</text>
+                      </view>
+                    </label>
+                  </radio-group>
+                </view>
+                <view wx:else class="matrix-error">
+                  <text>选项数据加载中...</text>
+                </view>
+              </view>
+            </view>
+          </view>
+
+          <!-- 文本题 -->
+          <view wx:if="{{questionItem.type === 'text'}}" class="text-question">
+            <textarea 
+              class="text-input" 
+              placeholder="{{questionItem.placeholder || '请输入...'}}"
+              value="{{answers[questionItem.id]}}"
+              bindinput="onTextInput"
+              data-question-id="{{questionItem.id}}"
+              maxlength="{{questionItem.maxlength || 500}}"
+            ></textarea>
+          </view>
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <view class="form-actions">
+        <button class="btn-submit {{submitting ? 'submitting' : ''}}" bindtap="submitEvaluation" disabled="{{submitting}}">
+          <text wx:if="{{!submitting}}" class="btn-icon">✓</text>
+          <text wx:else class="btn-loading">⏳</text>
+          <text class="btn-text">{{submitting ? '提交中...' : '提交评价'}}</text>
+        </button>
+      </view>
+    </view>
+
+    <view wx:if="{{loading}}" class="loading-container">
+      <text class="loading-text">加载问卷中...</text>
+    </view>
+  </view>
+</view>

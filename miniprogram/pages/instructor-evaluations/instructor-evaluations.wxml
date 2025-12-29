@@ -1,0 +1,33 @@
+<!--pages/instructor-evaluations/instructor-evaluations.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="header-title">课程评价</view>
+  </view>
+
+  <view class="courses-list" wx:if="{{courses.length > 0}}">
+    <view class="course-item" wx:for="{{courses}}" wx:key="id" bindtap="viewCourseEvaluation" data-id="{{item.id}}">
+      <view class="course-content">
+        <view class="course-title">{{item.title}}</view>
+        <view class="rating-overview">
+          <view class="rating-item">
+            <text class="rating-label">本期评分：</text>
+            <text class="rating-value">{{item.current_rating || 'N/A'}}</text>
+          </view>
+          <view class="rating-item">
+            <text class="rating-label">近3期平均：</text>
+            <text class="rating-value">{{item.avg_rating || 'N/A'}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="course-action">
+        <text class="action-text">查看详情 ></text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{courses.length === 0 && !loading}}" class="empty-state">
+    <text>暂无已授课课程</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+</view>

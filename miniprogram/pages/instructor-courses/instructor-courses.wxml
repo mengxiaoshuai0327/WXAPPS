@@ -1,0 +1,80 @@
+<!--pages/instructor-courses/instructor-courses.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="header-title">授课列表</view>
+  </view>
+
+  <!-- 标签页 -->
+  <view class="tabs">
+    <view class="tab-item {{currentTab === 'incomplete' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="incomplete">
+      <text>未完成课程</text>
+      <view class="tab-badge" wx:if="{{incompleteCourses && incompleteCourses.length > 0}}">{{incompleteCourses.length}}</view>
+    </view>
+    <view class="tab-item {{currentTab === 'completed' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="completed">
+      <text>已完成课程</text>
+      <view class="tab-badge" wx:if="{{completedCourses && completedCourses.length > 0}}">{{completedCourses.length}}</view>
+    </view>
+  </view>
+
+  <!-- 未完成课程列表 -->
+  <view class="courses-section" wx:if="{{currentTab === 'incomplete'}}">
+    <view wx:if="{{incompleteCourses && incompleteCourses.length > 0}}" class="courses-list">
+      <view class="course-item clickable" wx:for="{{incompleteCourses}}" wx:key="id" bindtap="viewScheduleDetail" data-id="{{item.id}}" data-completed="{{item.is_completed || false}}">
+        <view class="course-content">
+          <view class="course-title">{{item.title}}</view>
+          <view class="course-info">
+            <text class="info-label">课程编号：</text>
+            <text class="info-value">{{item.course_code}}</text>
+          </view>
+          <view class="course-info">
+            <text class="info-label">上课时间：</text>
+            <text class="info-value">{{item.date_time_text}}</text>
+          </view>
+          <view class="course-info">
+            <text class="info-label">报名人数：</text>
+            <text class="info-value">{{item.booking_count}}/{{item.max_students}} 人</text>
+          </view>
+          <view class="course-status">
+            <text class="status-badge scheduled">未完成</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text>暂无未完成课程</text>
+    </view>
+  </view>
+
+  <!-- 已完成课程列表 -->
+  <view class="courses-section" wx:if="{{currentTab === 'completed'}}">
+    <view wx:if="{{completedCourses && completedCourses.length > 0}}" class="courses-list">
+      <view class="course-item clickable" wx:for="{{completedCourses}}" wx:key="id" bindtap="viewScheduleDetail" data-id="{{item.id}}" data-completed="{{item.is_completed || true}}">
+        <view class="course-content">
+          <view class="course-title">{{item.title}}</view>
+          <view class="course-info">
+            <text class="info-label">课程编号：</text>
+            <text class="info-value">{{item.course_code}}</text>
+          </view>
+          <view class="course-info">
+            <text class="info-label">上课时间：</text>
+            <text class="info-value">{{item.date_time_text}}</text>
+          </view>
+          <view class="course-info">
+            <text class="info-label">报名人数：</text>
+            <text class="info-value">{{item.booking_count}}/{{item.max_students}} 人</text>
+          </view>
+          <view class="course-status">
+            <text class="status-badge completed">已完成</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:else class="empty-state">
+      <text>暂无已完成课程</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+</view>
