@@ -1,0 +1,108 @@
+<!--pages/discount-coupons/discount-coupons.wxml-->
+<view class="container">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="header-title">我的优惠券</view>
+    <view class="policy-link" bindtap="showPolicy">
+      <text class="policy-icon">ℹ️</text>
+      <text class="policy-text">使用说明</text>
+    </view>
+  </view>
+
+  <!-- 标签页切换 -->
+  <view class="tabs-container">
+    <view class="tab-item {{currentTab === 'unused' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="unused">
+      <text class="tab-text">未使用</text>
+      <view class="tab-badge" wx:if="{{couponStats.unused > 0}}">{{couponStats.unused}}</view>
+    </view>
+    <view class="tab-item {{currentTab === 'used' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="used">
+      <text class="tab-text">已使用</text>
+      <view class="tab-badge" wx:if="{{couponStats.used > 0}}">{{couponStats.used}}</view>
+    </view>
+    <view class="tab-item {{currentTab === 'expired' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="expired">
+      <text class="tab-text">已过期</text>
+      <view class="tab-badge" wx:if="{{couponStats.expired > 0}}">{{couponStats.expired}}</view>
+    </view>
+  </view>
+
+  <!-- 优惠券列表 -->
+  <view class="coupons-container">
+    <view class="coupon-card" wx:for="{{coupons}}" wx:key="id">
+      <!-- 左侧金额区域 -->
+      <view class="coupon-amount-section">
+        <view class="coupon-amount">¥{{item.amount}}</view>
+        <view class="coupon-status-badge {{item.status === 'used' ? 'status-used' : item.status === 'expired' ? 'status-expired' : 'status-unused'}}">
+          {{item.status === 'used' ? '已使用' : item.status === 'expired' ? '已过期' : '未使用'}}
+        </view>
+      </view>
+      
+      <!-- 右侧信息区域 -->
+      <view class="coupon-info-section">
+        <view class="info-row">
+          <text class="info-label">获得方式</text>
+          <text class="info-value source-value">{{item.source_text}}</text>
+        </view>
+        
+        <view class="info-row" wx:if="{{item.status === 'unused' && item.expiry_date}}">
+          <text class="info-label">有效期至</text>
+          <text class="info-value expiry-value">{{item.expiry_date_formatted}}</text>
+        </view>
+        
+        <view class="info-row" wx:if="{{item.status === 'unused' && !item.expiry_date}}">
+          <text class="info-label">有效期</text>
+          <text class="info-value expiry-value">永久有效</text>
+        </view>
+        
+        <view class="info-row">
+          <text class="info-label">获得时间</text>
+          <text class="info-value">{{item.created_at_formatted}}</text>
+        </view>
+        
+        <view class="info-row" wx:if="{{item.used_at}}">
+          <text class="info-label">使用时间</text>
+          <text class="info-value">{{item.used_at_formatted}}</text>
+        </view>
+      </view>
+      
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{coupons.length === 0 && !loading}}">
+      <text class="empty-icon">🎫</text>
+      <text class="empty-text">暂无优惠券</text>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="loading-state" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+  </view>
+
+  <!-- 海报Canvas（隐藏） -->
+  <canvas 
+    canvas-id="posterCanvas" 
+    id="posterCanvas"
+    class="poster-canvas"
+    style="width: 750px; height: 1334px;">
+  </canvas>
+
+  <!-- 海报预览弹窗 -->
+  <view class="poster-modal" wx:if="{{showPoster}}" bindtap="closePoster">
+    <view class="poster-modal-content" catchtap="stopPropagation">
+      <view class="poster-header">
+        <text class="poster-title">邀请海报</text>
+        <text class="poster-close" bindtap="closePoster">×</text>
+      </view>
+      <view class="poster-image-wrapper">
+        <image class="poster-image" src="{{posterImage}}" mode="aspectFit"></image>
+      </view>
+      <view class="poster-actions">
+        <button class="poster-action-btn save-btn" bindtap="savePoster">保存到相册</button>
+        <button class="poster-action-btn close-btn" bindtap="closePoster">关闭</button>
+      </view>
+    </view>
+  </view>
+</view>

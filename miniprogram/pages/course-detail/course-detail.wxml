@@ -1,0 +1,108 @@
+<!--pages/course-detail/course-detail.wxml-->
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+  
+  <view wx:else class="course-detail">
+    <view class="header">
+      <view class="title">{{courseInfo.title}}</view>
+      <view class="subtitle">{{courseInfo.subtitle}}</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">课程信息</view>
+      <view class="info-item">
+        <text class="label">课程编号：</text>
+        <text class="value">{{courseInfo.course_code}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">主题：</text>
+        <text class="value">{{courseInfo.theme_name}}</text>
+      </view>
+      <view class="info-item">
+        <text class="label">教练：</text>
+        <text class="value">{{courseInfo.instructor_name}}</text>
+      </view>
+    </view>
+
+    <view class="section" wx:if="{{courseInfo.instructor_intro}}">
+      <view class="section-title">教练简介</view>
+      <view class="content">{{courseInfo.instructor_intro}}</view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">课程内容介绍</view>
+      <view class="content">{{courseInfo.course_intro || '暂无课程内容介绍'}}</view>
+    </view>
+
+    <!-- 课程统计数据 -->
+    <view class="section" wx:if="{{statistics && statistics.evaluation_count > 0}}">
+      <view class="section-title">课程数据统计</view>
+      <view class="stats-grid">
+        <view class="stat-item">
+          <view class="stat-label">排课次数</view>
+          <view class="stat-value">{{statistics.schedule_count || 0}}</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-label">报名人数</view>
+          <view class="stat-value">{{statistics.booking_count || 0}}</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-label">评价数量</view>
+          <view class="stat-value">{{statistics.evaluation_count || 0}}</view>
+        </view>
+      </view>
+      
+      <view class="stats-scores" wx:if="{{statistics.evaluation_count > 0}}">
+        <view class="score-item">
+          <view class="score-label">培训价值</view>
+          <view class="score-value">{{statistics.avg_q1_score || '-'}}<text class="score-unit" wx:if="{{statistics.avg_q1_score}}">/5.0</text></view>
+        </view>
+        <view class="score-item">
+          <view class="score-label">CFO水平</view>
+          <view class="score-value">{{statistics.avg_q2_score || '-'}}<text class="score-unit" wx:if="{{statistics.avg_q2_score}}">/5.0</text></view>
+        </view>
+        <view class="score-item">
+          <view class="score-label">认知突破</view>
+          <view class="score-value">{{statistics.avg_q3_score || '-'}}<text class="score-unit" wx:if="{{statistics.avg_q3_score}}">/5.0</text></view>
+        </view>
+        <view class="score-item">
+          <view class="score-label">应用帮助</view>
+          <view class="score-value">{{statistics.avg_q4_score || '-'}}<text class="score-unit" wx:if="{{statistics.avg_q4_score}}">/5.0</text></view>
+        </view>
+        <view class="score-item">
+          <view class="score-label">案例评分</view>
+          <view class="score-value">{{statistics.avg_case_score || '-'}}<text class="score-unit" wx:if="{{statistics.avg_case_score}}">/5.0</text></view>
+        </view>
+        <view class="score-item">
+          <view class="score-label">推荐意愿</view>
+          <view class="score-value">{{statistics.avg_q9_score || '-'}}<text class="score-unit" wx:if="{{statistics.avg_q9_score}}">/5.0</text></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 用户评价建议 -->
+    <view class="section" wx:if="{{feedbacks && feedbacks.length > 0}}">
+      <view class="section-title">学员评价与建议</view>
+      <view class="feedback-list">
+        <view 
+          class="feedback-item {{(userRole === 'member' || userRole === 'instructor' || isChannelSales) && item.id ? 'feedback-item-clickable' : ''}}" 
+          wx:for="{{feedbacks}}" 
+          wx:key="id"
+          wx:for-index="feedbackIndex"
+          bindtap="viewEvaluationDetail"
+          data-id="{{item.id || ''}}"
+          data-index="{{feedbackIndex}}">
+          <view class="feedback-header">
+            <view class="feedback-user">{{item.user_name}}</view>
+            <view class="feedback-date">{{item.submitted_at}}</view>
+          </view>
+          <view class="feedback-content">{{item.feedback}}</view>
+          <view class="feedback-action" wx:if="{{(userRole === 'member' || userRole === 'instructor' || isChannelSales) && item.id}}">
+            <text class="feedback-action-text">查看详情 ></text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+

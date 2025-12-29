@@ -1,0 +1,261 @@
+/* pages/ticket-detail/ticket-detail.wxss */
+.container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200rpx 40rpx;
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 28rpx;
+  margin-bottom: 40rpx;
+  text-align: center;
+}
+
+.retry-btn {
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 20rpx 60rpx;
+  font-size: 28rpx;
+}
+
+.ticket-detail {
+  padding: 20rpx;
+}
+
+.ticket-header {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 40rpx;
+  margin-bottom: 20rpx;
+  text-align: center;
+}
+
+.ticket-code-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 10rpx;
+}
+
+.ticket-code-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 20rpx;
+  letter-spacing: 2rpx;
+}
+
+.ticket-status {
+  display: inline-block;
+  padding: 8rpx 24rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  font-weight: normal;
+}
+
+.status-unused {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
+
+.status-booked {
+  background-color: #fff3e0;
+  color: #ff9800;
+}
+
+.status-used {
+  background-color: #e3f2fd;
+  color: #2196f3;
+}
+
+.status-expired {
+  background-color: #fce4ec;
+  color: #e91e63;
+}
+
+.status-gifted {
+  background-color: #f3e5f5;
+  color: #9c27b0;
+}
+
+.info-section {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 30rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 24rpx;
+  font-size: 28rpx;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-label {
+  color: #666;
+  min-width: 160rpx;
+  flex-shrink: 0;
+}
+
+.info-value {
+  color: #1a1a1a;
+  flex: 1;
+  word-break: break-all;
+}
+
+.course-card {
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-top: 20rpx;
+  position: relative;
+}
+
+.course-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 10rpx;
+}
+
+.course-subtitle {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.course-info-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+  font-size: 28rpx;
+}
+
+.course-info-row:last-child {
+  margin-bottom: 0;
+}
+
+.view-course-link {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #e0e0e0;
+  text-align: right;
+  color: #2196f3;
+  font-size: 26rpx;
+}
+
+.restrictions-section {
+  margin-top: 30rpx;
+  padding-top: 30rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.restrictions-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 20rpx;
+}
+
+.restrictions-content {
+  background-color: #fff8e1;
+  border-radius: 8rpx;
+  padding: 20rpx;
+}
+
+.restriction-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+  font-size: 26rpx;
+}
+
+.restriction-item:last-child {
+  margin-bottom: 0;
+}
+
+.restriction-label {
+  color: #666;
+  min-width: 140rpx;
+  flex-shrink: 0;
+}
+
+.restriction-value {
+  color: #f57c00;
+  font-weight: 500;
+  flex: 1;
+}
+
+.restriction-note {
+  color: #4caf50;
+  font-size: 26rpx;
+}
+
+/* 优惠券信息样式 */
+.coupon-info-item {
+  align-items: flex-start;
+}
+
+.coupon-info-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8rpx;
+}
+
+.coupon-amount {
+  color: #FF6B6B;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.coupon-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+}
+
+.coupon-source {
+  color: #666;
+  font-size: 24rpx;
+}
+
+.coupon-code {
+  color: #999;
+  font-size: 22rpx;
+}
+
+.coupon-channel,
+.coupon-sales,
+.coupon-instructor {
+  color: #999;
+  font-size: 22rpx;
+}
+

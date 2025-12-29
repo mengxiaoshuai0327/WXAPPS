@@ -1,0 +1,173 @@
+/* pages/completed-courses/completed-courses.wxss */
+.container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.header {
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.courses-list {
+  padding: 0 20rpx;
+}
+
+.course-item {
+  background-color: #fff;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.course-header {
+  padding: 30rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.course-content {
+  flex: 1;
+}
+
+.course-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 12rpx;
+}
+
+.course-info {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+}
+
+.info-label {
+  margin-right: 8rpx;
+}
+
+.info-value {
+  color: #333;
+}
+
+.course-status {
+  margin-top: 12rpx;
+}
+
+.status-text {
+  display: inline-block;
+  padding: 4rpx 12rpx;
+  background-color: #fff3cd;
+  color: #856404;
+  font-size: 24rpx;
+  border-radius: 4rpx;
+}
+
+.status-text.evaluated {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.expand-icon {
+  margin-left: 20rpx;
+  flex-shrink: 0;
+}
+
+.icon-arrow {
+  font-size: 24rpx;
+  color: #999;
+  transition: transform 0.3s;
+  display: block;
+}
+
+.icon-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+/* 展开后的明细区域 */
+.course-details {
+  border-top: 1rpx solid #f0f0f0;
+  padding: 0 30rpx 30rpx;
+  background-color: #fafafa;
+}
+
+.detail-section {
+  margin-top: 30rpx;
+  padding: 20rpx;
+  background-color: #fff;
+  border-radius: 8rpx;
+}
+
+.detail-section:first-child {
+  margin-top: 0;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 20rpx;
+  padding-bottom: 12rpx;
+  border-bottom: 1rpx solid #e8e8e8;
+}
+
+.detail-item {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 16rpx;
+  display: flex;
+  align-items: flex-start;
+}
+
+.detail-item:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  color: #999;
+  min-width: 140rpx;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  color: #333;
+  flex: 1;
+}
+
+.detail-action {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.action-link {
+  font-size: 28rpx;
+  color: #4A90E2;
+  text-decoration: none;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 100rpx 40rpx;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.loading {
+  text-align: center;
+  padding: 40rpx;
+  color: #999;
+  font-size: 28rpx;
+}

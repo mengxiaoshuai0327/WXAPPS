@@ -1,0 +1,29 @@
+<!--pages/messages/detail/detail.wxml-->
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+  
+  <view wx:if="{{!loading && message.id}}" class="message-detail">
+    <view class="message-header">
+      <view class="message-icon">🔔</view>
+      <view class="message-title">{{message.title || '系统消息'}}</view>
+    </view>
+
+    <view class="message-time">
+      <text class="time-label">发布时间：</text>
+      <text class="time-value">{{message.created_at_formatted || message.created_at || ''}}</text>
+    </view>
+
+    <view class="message-content">
+      <text class="content-text">{{message.content || '暂无内容'}}</text>
+    </view>
+  </view>
+  
+  <view wx:if="{{!loading && !message.id}}" class="empty-state">
+    <text>消息不存在或已删除</text>
+  </view>
+</view>
+
+
+
+
+

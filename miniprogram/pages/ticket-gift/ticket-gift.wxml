@@ -1,0 +1,108 @@
+<!--pages/ticket-gift/ticket-gift.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="header-title">赠予课券</view>
+  </view>
+
+  <view class="gift-info">
+    <view class="info-card">
+      <view class="info-item">
+        <text class="info-label">未使用课券</text>
+        <text class="info-value">{{unusedCount}}张</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">自行购买课券</text>
+        <text class="info-value">{{purchasedCount}}张</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="gift-section" wx:if="{{unusedTickets.length > 0}}">
+    <view class="section-title">选择要赠予的课券</view>
+    <view class="tickets-list">
+      <view class="ticket-item" wx:for="{{unusedTickets}}" wx:key="id">
+        <view class="ticket-checkbox">
+          <checkbox value="{{item.id}}" checked="{{selectedTicketId === item.id}}" bindtap="selectTicket" data-id="{{item.id}}" />
+        </view>
+        <view class="ticket-info">
+          <view class="ticket-code">课券编号：{{item.ticket_code}}</view>
+          <view class="ticket-source">获得方式：{{item.source_text}}</view>
+          <view class="ticket-date">获得时间：{{item.created_at_formatted}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="gift-form">
+      <view class="form-item">
+        <text class="form-label">受赠人会员编号 <text style="color: #f56c6c;">*</text></text>
+        <input class="form-input" placeholder="请输入受赠人的会员编号" value="{{receiverMemberId}}" bindinput="onMemberIdInput" />
+      </view>
+      
+      <!-- 限制选项 -->
+      <view class="form-item">
+        <view class="restriction-header" bindtap="toggleRestrictions">
+          <text class="form-label">报课限制（可选）</text>
+          <text class="toggle-icon">{{showRestrictions ? '▼' : '▶'}}</text>
+        </view>
+        <view class="restriction-content" wx:if="{{showRestrictions}}">
+          <view class="form-row">
+            <text class="form-label-small">限定报课模块：</text>
+            <picker mode="selector" range="{{moduleOptions}}" range-key="name" value="{{moduleIndex}}" bindchange="onModuleChange">
+              <view class="picker-view">{{moduleOptions[moduleIndex].name}}</view>
+            </picker>
+          </view>
+          <view class="form-row">
+            <text class="form-label-small">限定报课主题：</text>
+            <picker mode="selector" range="{{themeOptions}}" range-key="name" value="{{themeIndex}}" bindchange="onThemeChange">
+              <view class="picker-view">{{themeOptions[themeIndex].name}}</view>
+            </picker>
+          </view>
+          <view class="form-row">
+            <text class="form-label-small">限定报课课程：</text>
+            <picker mode="selector" range="{{courseOptions}}" range-key="name" value="{{courseIndex}}" bindchange="onCourseChange">
+              <view class="picker-view">{{courseOptions[courseIndex].name}}</view>
+            </picker>
+          </view>
+          <view class="form-hint">
+            <text>提示：如果设置了限制，受赠人只能使用此课券预订对应模块、主题或课程的排课。如果不设置，则不受限制。</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="form-item">
+        <text class="form-label">赠予留言（选填）</text>
+        <textarea class="form-textarea" placeholder="请输入赠予留言" value="{{giftMessage}}" bindinput="onMessageInput" maxlength="200" />
+      </view>
+    </view>
+
+    <view class="action-section">
+      <button class="btn-gift" bindtap="giftTicket" disabled="{{!selectedTicketId || !receiverMemberId}}">
+        确认赠予
+      </button>
+    </view>
+  </view>
+
+  <view wx:if="{{unusedTickets.length === 0 && !loading}}" class="empty-state">
+    <text>您没有可赠予的课券</text>
+  </view>
+
+  <view class="history-section" wx:if="{{giftHistory.length > 0}}">
+    <view class="section-title">赠送历史</view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{giftHistory}}" wx:key="id">
+        <view class="history-info">
+          <view class="history-code">课券编号：{{item.ticket_code}}</view>
+          <view class="history-receiver">接收人：{{item.receiver_name || item.receiver_real_name || item.receiver_nickname || item.receiver_member_id || '未知'}}</view>
+          <view class="history-receiver-member" wx:if="{{item.receiver_member_id && (item.receiver_name || item.receiver_real_name || item.receiver_nickname)}}">会员编号：{{item.receiver_member_id}}</view>
+          <view class="history-time">赠予时间：{{item.gifted_at_formatted}}</view>
+        </view>
+        <view class="history-status">
+          <text class="status-text">{{item.status_text}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+</view>
+

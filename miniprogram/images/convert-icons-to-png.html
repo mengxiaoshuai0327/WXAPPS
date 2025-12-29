@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TabBar 图标转换工具</title>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 32px;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .icon-card {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .icon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .icon-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+        
+        .icon-preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .icon-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .icon-label {
+            font-size: 12px;
+            color: #999;
+            font-weight: 500;
+        }
+        
+        svg {
+            width: 81px;
+            height: 81px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            background: white;
+        }
+        
+        .icon-wrapper:first-child svg {
+            color: #999999;
+        }
+        
+        .icon-wrapper:last-child svg {
+            color: #1a1a1a;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        button:hover {
+            background: #333;
+            transform: scale(1.05);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        .download-all {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 40px auto 0;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .download-all:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .tips {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+        
+        .tips h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .tips p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 TabBar 图标转换工具</h1>
+        <p class="subtitle">将 SVG 图标转换为小程序所需的 PNG 格式 (81x81px)</p>
+        
+        <div class="icons-grid" id="iconsGrid"></div>
+        
+        <button class="download-all" onclick="downloadAll()">📥 一键下载所有图标</button>
+        
+        <div class="tips">
+            <h3>💡 使用说明</h3>
+            <p>
+                1. 点击每个图标下方的"下载未选中"或"下载选中"按钮，保存 PNG 图片<br>
+                2. 将下载的图片重命名为对应的文件名（如 home.png, home-active.png）<br>
+                3. 替换 miniprogram/images/ 目录下的旧图标文件<br>
+                4. 刷新小程序开发工具即可看到新图标
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const icons = [
+            {
+                name: 'home',
+                title: '首页',
+                svg: `<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M3 10L12 3L21 10V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V10Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="9" y="14" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5" fill="none"/>
+  <circle cx="7" cy="12" r="1.5" fill="currentColor"/>
+  <circle cx="17" cy="12" r="1.5" fill="currentColor"/>
+</svg>`,
+                svgActive: `<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M3 10L12 3L21 10V19C21 19.5523 20.5523 20 20 20H4C3.44772 20 3 19.5523 3 19V10Z" fill="currentColor"/>
+  <rect x="9" y="14" width="6" height="6" rx="1" fill="white" opacity="0.9"/>
+  <circle cx="7" cy="12" r="1.5" fill="white" opacity="0.9"/>
+  <circle cx="17" cy="12" r="1.5" fill="white" opacity="0.9"/>
+</svg>`
+            },
+            {
+                name: 'schedule',
+                title: '课程表',
+                svg: `<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="5" width="16" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+  <rect x="4" y="5" width="16" height="4" rx="2" fill="currentColor" opacity="0.2"/>
+  <circle cx="7" cy="7" r="1" fill="currentColor"/>
+  <circle cx="17" cy="7" r="1" fill="currentColor"/>
+  <line x1="4" y1="11" x2="20" y2="11" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+  <path d="M9 16L11 18L15 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`,
+                svgActive: `<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="5" width="16" height="16" rx="2" fill="currentColor"/>
+  <rect x="4" y="5" width="16" height="4" rx="2" fill="white" opacity="0.3"/>
+  <circle cx="7" cy="7" r="1" fill="white"/>
+  <circle cx="17" cy="7" r="1" fill="white"/>
+  <line x1="4" y1="11" x2="20" y2="11" stroke="white" stroke-width="1" opacity="0.3"/>
+  <path d="M9 16L11 18L15 14" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`
+            },
+            {
+                name: 'ranking',
+                title: '排行榜',
+                svg: `<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M7 21H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <path d="M7 21C7 18.2386 9.23858 16 12 16C14.7614 16 17 18.2386 17 21" stroke="currentColor" stroke-width="2" fill="none"/>
+  <path d="M8 8V6C8 4.89543 8.89543 4 10 4H14C15.1046 4 16 4.89543 16 6V8H17C18.1046 8 19 8.89543 19 10V13C19 14.6569 17.6569 16 16 16H8C6.34315 16 5 14.6569 5 13V10C5 8.89543 5.89543 8 7 8H8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 8L12.5 9.5L14 10L12.5 10.5L12 12L11.5 10.5L10 10L11.5 9.5L12 8Z" fill="currentColor"/>
+</svg>`,
+                svgActive: `<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M7 21H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <path d="M7 21C7 18.2386 9.23858 16 12 16C14.7614 16 17 18.2386 17 21" stroke="currentColor" stroke-width="2" fill="none"/>
+  <path d="M8 8V6C8 4.89543 8.89543 4 10 4H14C15.1046 4 16 4.89543 16 6V8H17C18.1046 8 19 8.89543 19 10V13C19 14.6569 17.6569 16 16 16H8C6.34315 16 5 14.6569 5 13V10C5 8.89543 5.89543 8 7 8H8Z" fill="currentColor"/>
+  <path d="M12 8L12.5 9.5L14 10L12.5 10.5L12 12L11.5 10.5L10 10L11.5 9.5L12 8Z" fill="white"/>
+</svg>`
+            },
+            {
+                name: 'profile',
+                title: '我的',
+                svg: `<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/>
+  <path d="M5 20C5 16.6863 7.68629 14 11 14H13C16.3137 14 19 16.6863 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="9" cy="10" r="0.8" fill="currentColor"/>
+  <circle cx="15" cy="10" r="0.8" fill="currentColor"/>
+</svg>`,
+                svgActive: `<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="12" cy="8" r="4" fill="currentColor"/>
+  <path d="M5 20C5 16.6863 7.68629 14 11 14H13C16.3137 14 19 16.6863 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="currentColor"/>
+  <circle cx="9" cy="8" r="1" fill="white"/>
+  <circle cx="15" cy="8" r="1" fill="white"/>
+  <path d="M9 11C9 11 10.5 12.5 12 12.5C13.5 12.5 15 11 15 11" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+</svg>`
+            }
+        ];
+
+        function svgToPng(svgString, color) {
+            return new Promise((resolve) => {
+                // 创建 SVG 元素
+                const parser = new DOMParser();
+                const svgDoc = parser.parseFromString(svgString.replace('currentColor', color), 'image/svg+xml');
+                const svgElement = svgDoc.documentElement;
+                
+                // 设置 SVG 尺寸
+                svgElement.setAttribute('width', '81');
+                svgElement.setAttribute('height', '81');
+                
+                // 转换为 data URL
+                const svgData = new XMLSerializer().serializeToString(svgElement);
+                const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                const svgUrl = URL.createObjectURL(svgBlob);
+                
+                // 创建 canvas
+                const canvas = document.createElement('canvas');
+                canvas.width = 81;
+                canvas.height = 81;
+                const ctx = canvas.getContext('2d');
+                
+                // 绘制 SVG 到 canvas
+                const img = new Image();
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, 81, 81);
+                    URL.revokeObjectURL(svgUrl);
+                    canvas.toBlob((blob) => {
+                        resolve(URL.createObjectURL(blob));
+                    }, 'image/png');
+                };
+                img.src = svgUrl;
+            });
+        }
+
+        function downloadImage(url, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = url;
+            link.click();
+        }
+
+        async function createIconCard(icon) {
+            const card = document.createElement('div');
+            card.className = 'icon-card';
+            
+            const title = document.createElement('div');
+            title.className = 'icon-title';
+            title.textContent = icon.title;
+            card.appendChild(title);
+            
+            const preview = document.createElement('div');
+            preview.className = 'icon-preview';
+            
+            // 未选中状态
+            const wrapper1 = document.createElement('div');
+            wrapper1.className = 'icon-wrapper';
+            const svg1 = document.createElement('div');
+            svg1.innerHTML = icon.svg;
+            svg1.querySelector('svg').style.color = '#999999';
+            const label1 = document.createElement('div');
+            label1.className = 'icon-label';
+            label1.textContent = '未选中';
+            wrapper1.appendChild(svg1);
+            wrapper1.appendChild(label1);
+            
+            // 选中状态
+            const wrapper2 = document.createElement('div');
+            wrapper2.className = 'icon-wrapper';
+            const svg2 = document.createElement('div');
+            svg2.innerHTML = icon.svgActive;
+            svg2.querySelector('svg').style.color = '#1a1a1a';
+            const label2 = document.createElement('div');
+            label2.className = 'icon-label';
+            label2.textContent = '选中';
+            wrapper2.appendChild(svg2);
+            wrapper2.appendChild(label2);
+            
+            preview.appendChild(wrapper1);
+            preview.appendChild(wrapper2);
+            card.appendChild(preview);
+            
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'button-group';
+            
+            const btn1 = document.createElement('button');
+            btn1.textContent = '下载未选中';
+            btn1.onclick = async () => {
+                const url = await svgToPng(icon.svg, '#999999');
+                downloadImage(url, `${icon.name}.png`);
+            };
+            
+            const btn2 = document.createElement('button');
+            btn2.textContent = '下载选中';
+            btn2.onclick = async () => {
+                const url = await svgToPng(icon.svgActive, '#1a1a1a');
+                downloadImage(url, `${icon.name}-active.png`);
+            };
+            
+            buttonGroup.appendChild(btn1);
+            buttonGroup.appendChild(btn2);
+            card.appendChild(buttonGroup);
+            
+            return card;
+        }
+
+        async function init() {
+            const grid = document.getElementById('iconsGrid');
+            for (const icon of icons) {
+                const card = await createIconCard(icon);
+                grid.appendChild(card);
+            }
+        }
+
+        async function downloadAll() {
+            if (!confirm('确定要下载所有8个图标文件吗？')) {
+                return;
+            }
+            
+            for (const icon of icons) {
+                // 下载未选中
+                const url1 = await svgToPng(icon.svg, '#999999');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                downloadImage(url1, `${icon.name}.png`);
+                
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // 下载选中
+                const url2 = await svgToPng(icon.svgActive, '#1a1a1a');
+                await new Promise(resolve => setTimeout(resolve, 100));
+                downloadImage(url2, `${icon.name}-active.png`);
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            alert('所有图标下载完成！请检查下载文件夹。');
+        }
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

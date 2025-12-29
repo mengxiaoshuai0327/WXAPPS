@@ -1,0 +1,363 @@
+/* pages/invitation/invitation.wxss */
+.container {
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  padding: 30rpx;
+}
+
+.section {
+  background-color: #fff;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 20rpx;
+}
+
+.invite-code {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.code {
+  flex: 1;
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.copy-btn {
+  padding: 20rpx 40rpx;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+  padding: 20rpx 0;
+}
+
+.stat-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30rpx 20rpx;
+  border-radius: 16rpx;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.stat-card:active {
+  transform: scale(0.95);
+}
+
+.stat-card-blue {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-card-green {
+  background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+}
+
+.stat-card-orange {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-icon {
+  font-size: 48rpx;
+  margin-bottom: 15rpx;
+  opacity: 0.9;
+  filter: drop-shadow(0 2rpx 4rpx rgba(0, 0, 0, 0.1));
+}
+
+.stat-value {
+  font-size: 52rpx;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8rpx;
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  text-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+.reward-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.8;
+  margin-bottom: 30rpx;
+}
+
+.reward-summary {
+  margin-top: 30rpx;
+  padding-top: 30rpx;
+  border-top: 1rpx solid #e9ecef;
+}
+
+.summary-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 20rpx;
+}
+
+.coupons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.coupon-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+  border-left: 4rpx solid #667eea;
+}
+
+.coupon-amount {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #f56c6c;
+  margin-right: 20rpx;
+  min-width: 120rpx;
+}
+
+.coupon-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.coupon-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15rpx;
+}
+
+.coupon-source {
+  font-size: 28rpx;
+  color: #1a1a1a;
+  font-weight: 500;
+  flex: 1;
+}
+
+.coupon-status-tag {
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.coupon-status-tag.status-unused {
+  background-color: #e6f7ff;
+  color: #1890ff;
+  border: 1rpx solid #91d5ff;
+}
+
+.coupon-status-tag.status-used {
+  background-color: #f6ffed;
+  color: #52c41a;
+  border: 1rpx solid #b7eb8f;
+}
+
+.coupon-status-tag.status-expired {
+  background-color: #fff2e8;
+  color: #fa8c16;
+  border: 1rpx solid #ffd591;
+}
+
+.coupon-date {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 二维码区域 */
+.qr-code-section {
+  margin-top: 40rpx;
+  padding-top: 40rpx;
+  border-top: 1rpx solid #e9ecef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-title {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+}
+
+.qr-container {
+  width: 400rpx;
+  height: 400rpx;
+  background-color: #fff;
+  border: 2rpx solid #e9ecef;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-image {
+  width: 100%;
+  height: 100%;
+}
+
+.qr-tip {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  margin-top: 40rpx;
+  display: flex;
+  gap: 20rpx;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 24rpx;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+}
+
+.action-btn.share-btn {
+  background-color: #07c160;
+}
+
+.action-btn.poster-btn {
+  background-color: #ff6b6b;
+}
+
+.btn-icon {
+  font-size: 32rpx;
+}
+
+/* 海报Canvas */
+.poster-canvas {
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  width: 750px;
+  height: 1334px;
+}
+
+/* 海报预览弹窗 */
+.poster-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+}
+
+.poster-content {
+  background-color: #fff;
+  border-radius: 16rpx;
+  width: 100%;
+  max-width: 600rpx;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.poster-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #e9ecef;
+}
+
+.poster-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.poster-close {
+  font-size: 48rpx;
+  color: #999;
+  line-height: 1;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.poster-preview {
+  width: 100%;
+  max-height: 60vh;
+  background-color: #f5f5f5;
+}
+
+.poster-actions {
+  display: flex;
+  gap: 20rpx;
+  padding: 30rpx;
+  border-top: 1rpx solid #e9ecef;
+}
+
+.poster-action-btn {
+  flex: 1;
+  padding: 24rpx;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.poster-action-btn.cancel-btn {
+  background-color: #f5f5f5;
+  color: #666;
+}
+

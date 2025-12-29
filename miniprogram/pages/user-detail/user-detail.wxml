@@ -1,0 +1,193 @@
+<!--pages/user-detail/user-detail.wxml-->
+<view class="container">
+  <view class="user-header">
+    <view class="user-avatar" bindtap="chooseAvatar">
+      <image wx:if="{{userInfo.avatar_url}}" src="{{userInfo.avatar_url}}" mode="aspectFill"></image>
+      <text wx:else class="avatar-text">{{userInfo.nickname ? userInfo.nickname[0] : 'U'}}</text>
+      <view class="avatar-upload-hint">
+        <text class="upload-icon">📷</text>
+        <text class="upload-text">点击上传</text>
+      </view>
+    </view>
+    <view class="user-name">{{userInfo.nickname || '未设置昵称'}}</view>
+  </view>
+
+  <view class="info-section">
+    <view class="info-item">
+      <text class="info-label">昵称</text>
+      <input class="info-input" value="{{userInfo.nickname}}" placeholder="请输入昵称" bindinput="onNicknameInput" />
+    </view>
+    <view class="info-item">
+      <text class="info-label">姓名</text>
+      <input class="info-input" value="{{userInfo.real_name}}" placeholder="请输入姓名" bindinput="onRealNameInput" />
+    </view>
+    <view class="info-item">
+      <text class="info-label">{{userInfo.displayIdLabel || '会员ID'}}</text>
+      <text class="info-value">{{userInfo.displayIdValue || '未设置'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">加入时间</text>
+      <text class="info-value">{{userInfo.created_at_formatted || '未设置'}}</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">手机号</text>
+      <input class="info-input" value="{{userInfo.phone}}" placeholder="请输入手机号" bindinput="onPhoneInput" />
+    </view>
+  </view>
+
+  <!-- 会员详细资料 -->
+  <view class="section-title" bindtap="toggleMemberProfile">
+    <text>会员详细资料（选填）</text>
+    <text class="section-arrow">{{showMemberProfile ? '▼' : '▶'}}</text>
+  </view>
+  <view class="info-section" wx:if="{{showMemberProfile}}">
+    <view class="info-item">
+      <text class="info-label">职位/角色</text>
+      <picker mode="selector" range="{{positionOptions}}" range-key="label" value="{{positionIndex}}" bindchange="onPositionChange">
+        <view class="picker-view">
+          <view class="picker-content">
+            <text class="{{positionDisplayText ? 'picker-text' : 'picker-placeholder'}}">
+              {{positionDisplayText || '请选择职位/角色'}}
+            </text>
+          </view>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <view class="info-item" wx:if="{{memberProfile.position === 'OF'}}">
+      <text class="info-label">职位说明</text>
+      <input class="info-input" value="{{memberProfile.position_other}}" placeholder="请输入职位说明" bindinput="onPositionOtherInput" />
+    </view>
+    <view class="info-item">
+      <text class="info-label">公司类型</text>
+      <picker mode="selector" range="{{companyTypeOptions}}" range-key="label" value="{{companyTypeIndex}}" bindchange="onCompanyTypeChange">
+        <view class="picker-view">
+          <view class="picker-content">
+            <text class="{{companyTypeDisplayText ? 'picker-text' : 'picker-placeholder'}}">
+              {{companyTypeDisplayText || '请选择公司类型'}}
+            </text>
+          </view>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <view class="info-item" wx:if="{{memberProfile.company_type === 'OF' || memberProfile.company_type === 'OJ'}}">
+      <text class="info-label">公司类型说明</text>
+      <input class="info-input" value="{{memberProfile.company_type_other}}" placeholder="请输入公司类型说明" bindinput="onCompanyTypeOtherInput" />
+    </view>
+    <view class="info-item">
+      <text class="info-label">岗位头衔</text>
+      <input class="info-input" value="{{memberProfile.job_title}}" placeholder="请输入岗位头衔" bindinput="onJobTitleInput" />
+    </view>
+    <view class="info-item">
+      <text class="info-label">在本岗位任职年数</text>
+      <input class="info-input" type="digit" value="{{memberProfile.position_years}}" placeholder="请输入任职年数" bindinput="onPositionYearsInput" />
+    </view>
+    <view class="info-item">
+      <text class="info-label">在企业总计工作年限</text>
+      <input class="info-input" type="digit" value="{{memberProfile.total_work_years}}" placeholder="请输入工作年限" bindinput="onTotalWorkYearsInput" />
+    </view>
+    <view class="info-item">
+      <text class="info-label">管理的财务团队人数</text>
+      <input class="info-input" type="number" value="{{memberProfile.managed_team_size}}" placeholder="请输入人数" bindinput="onManagedTeamSizeInput" />
+    </view>
+    <view class="info-item">
+      <text class="info-label">企业整个财务团队人数</text>
+      <input class="info-input" type="number" value="{{memberProfile.total_finance_team_size}}" placeholder="请输入人数" bindinput="onTotalFinanceTeamSizeInput" />
+    </view>
+    <view class="info-item">
+      <text class="info-label">离财务一号位汇报关系层数</text>
+      <input class="info-input" type="number" value="{{memberProfile.reporting_layers}}" placeholder="请输入层数（财务一号位填0）" bindinput="onReportingLayersInput" />
+    </view>
+  </view>
+
+  <!-- 能力自评 -->
+  <view class="section-title" bindtap="toggleAbilityAssessment">
+    <text>能力自评（选填）</text>
+    <text class="section-arrow">{{showAbilityAssessment ? '▼' : '▶'}}</text>
+  </view>
+  <view class="info-section" wx:if="{{showAbilityAssessment}}">
+    <view class="info-item">
+      <text class="info-label">财务专业能力</text>
+      <picker mode="selector" range="{{financialAbilityOptions}}" range-key="label" value="{{financialAbilityIndex}}" bindchange="onFinancialAbilityChange">
+        <view class="picker-view">
+          <view class="picker-content">
+            <text class="{{financialAbilityDisplayText ? 'picker-text' : 'picker-placeholder'}}">
+              {{financialAbilityDisplayText || '请选择'}}
+            </text>
+          </view>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <view class="info-item">
+      <text class="info-label">业务支持与经营管理能力</text>
+      <view class="picker-view" bindtap="showBusinessAbilityPicker">
+        <view class="picker-content">
+          <text class="{{businessAbilityDisplayText ? 'picker-text' : 'picker-placeholder'}}">
+            {{businessAbilityDisplayText || '请选择'}}
+          </text>
+        </view>
+        <text class="picker-arrow">›</text>
+      </view>
+    </view>
+    <view class="info-item">
+      <text class="info-label">流程和系统能力</text>
+      <picker mode="selector" range="{{processAbilityOptions}}" range-key="label" value="{{processAbilityIndex}}" bindchange="onProcessAbilityChange">
+        <view class="picker-view">
+          <view class="picker-content">
+            <text class="{{processAbilityDisplayText ? 'picker-text' : 'picker-placeholder'}}">
+              {{processAbilityDisplayText || '请选择'}}
+            </text>
+          </view>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <view class="info-item">
+      <text class="info-label">领导力和影响力</text>
+      <picker mode="selector" range="{{leadershipAbilityOptions}}" range-key="label" value="{{leadershipAbilityIndex}}" bindchange="onLeadershipAbilityChange">
+        <view class="picker-view">
+          <view class="picker-content">
+            <text class="{{leadershipAbilityDisplayText ? 'picker-text' : 'picker-placeholder'}}">
+              {{leadershipAbilityDisplayText || '请选择'}}
+            </text>
+          </view>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    <view class="info-item">
+      <text class="info-label">资本运作和价值管理能力</text>
+      <picker mode="selector" range="{{capitalAbilityOptions}}" range-key="label" value="{{capitalAbilityIndex}}" bindchange="onCapitalAbilityChange">
+        <view class="picker-view">
+          <view class="picker-content">
+            <text class="{{capitalAbilityDisplayText ? 'picker-text' : 'picker-placeholder'}}">
+              {{capitalAbilityDisplayText || '请选择'}}
+            </text>
+          </view>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 业务能力多选弹窗 -->
+  <view class="picker-modal" wx:if="{{showBusinessAbilityModal}}" bindtap="hideBusinessAbilityPicker">
+    <view class="picker-modal-content" catchtap="">
+      <view class="picker-modal-header">
+        <text class="picker-modal-title">业务支持与经营管理能力</text>
+        <text class="picker-modal-close" catchtap="hideBusinessAbilityPicker">完成</text>
+      </view>
+      <view class="picker-modal-body">
+        <view class="modal-checkbox-item" wx:for="{{businessAbilityOptions}}" wx:key="value" catchtap="selectBusinessAbilityOption" data-value="{{item.value}}">
+          <text class="modal-checkbox-label {{abilityAssessment.business_ability === item.value ? 'selected' : ''}}">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-section">
+    <button class="btn-save" bindtap="saveUserInfo">保存修改</button>
+  </view>
+</view>

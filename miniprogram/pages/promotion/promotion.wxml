@@ -1,0 +1,73 @@
+<!--pages/promotion/promotion.wxml-->
+<view class="container">
+  <!-- 统计信息 -->
+  <view class="section">
+    <view class="section-title">推广统计</view>
+    <view class="stats">
+      <view class="stat-card stat-card-blue" bindtap="viewAllInvitations">
+        <view class="stat-icon">👥</view>
+        <text class="stat-value">{{stats.invited_count || 0}}</text>
+        <text class="stat-label">总邀请人数</text>
+      </view>
+      <view class="stat-card stat-card-green" bindtap="viewRegistered">
+        <view class="stat-icon">✓</view>
+        <text class="stat-value">{{stats.registered_count || 0}}</text>
+        <text class="stat-label">已注册</text>
+      </view>
+      <view class="stat-card stat-card-orange" bindtap="viewPurchased">
+        <view class="stat-icon">🎫</view>
+        <text class="stat-value">{{stats.purchased_count || 0}}</text>
+        <text class="stat-label">已购券</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 二维码和操作区域 -->
+  <view class="section">
+    <!-- 二维码显示 -->
+    <view class="qr-code-section" wx:if="{{qrCodeUrl}}">
+      <view class="qr-title">邀请二维码</view>
+      <view class="qr-container">
+        <image class="qr-image" src="{{qrCodeUrl}}" mode="aspectFit"></image>
+      </view>
+      <text class="qr-tip">微信扫一扫，立即注册</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-buttons">
+      <button class="action-btn share-btn" open-type="share">
+        <text class="btn-icon">📤</text>
+        <text>分享邀请</text>
+      </button>
+      <button class="action-btn save-btn" bindtap="saveQRCode" disabled="{{!qrCodeUrl}}">
+        <text class="btn-icon">💾</text>
+        <text>保存二维码</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 海报Canvas（隐藏） -->
+  <canvas 
+    canvas-id="posterCanvas" 
+    id="posterCanvas"
+    class="poster-canvas"
+    style="width: 750px; height: 1334px;">
+  </canvas>
+
+  <!-- 海报预览弹窗 -->
+  <view class="poster-modal" wx:if="{{showPoster}}" bindtap="closePoster">
+    <view class="poster-content" catchtap="stopPropagation">
+      <view class="poster-header">
+        <text class="poster-title">邀请海报</text>
+        <text class="poster-close" bindtap="closePoster">×</text>
+      </view>
+      <image class="poster-preview" src="{{posterImage}}" mode="aspectFit"></image>
+      <view class="poster-actions">
+        <button class="poster-action-btn" bindtap="savePoster">保存到相册</button>
+        <button class="poster-action-btn cancel-btn" bindtap="closePoster">取消</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+

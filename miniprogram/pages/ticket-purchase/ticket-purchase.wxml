@@ -1,0 +1,121 @@
+<!--pages/ticket-purchase/ticket-purchase.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="header-icon">
+      <text class="icon-text">💳</text>
+    </view>
+    <view class="header-title">购买课券</view>
+    <view class="header-subtitle">选择优惠券,享受专属优惠</view>
+  </view>
+
+  <view class="content-card">
+    <!-- 购买数量 -->
+    <view class="section">
+      <view class="section-label">
+        <text>购买数量</text>
+      </view>
+      <view class="quantity-control">
+        <view class="quantity-input-wrapper">
+          <view class="quantity-btn {{quantity <= 1 ? 'disabled' : ''}}" bindtap="decreaseQuantity">-</view>
+          <input class="quantity-input" type="digit" value="{{quantity}}" bindinput="onQuantityInput" />
+          <view class="quantity-btn {{quantity >= 99 ? 'disabled' : ''}}" bindtap="increaseQuantity">+</view>
+        </view>
+        <text class="quantity-tip">每次最多购买99张</text>
+      </view>
+    </view>
+
+    <!-- 优惠券 -->
+    <view class="section">
+      <view class="section-label">
+        <text>优惠券</text>
+        <text class="label-tip">（每张课券最多使用1张，最多可选{{quantity}}张）</text>
+      </view>
+      <view class="coupon-selector" bindtap="showCouponPicker">
+        <text class="coupon-text" wx:if="{{selectedCoupons.length > 0}}">
+          已选择{{selectedCoupons.length}}张优惠券
+          <text wx:if="{{selectedCoupons.length === 1}}">（{{selectedCoupons[0].amount}}元）</text>
+          <text wx:else>（{{selectedCoupons[0].amount}}元等{{selectedCoupons.length}}张）</text>
+        </text>
+        <text class="coupon-text placeholder" wx:else>不使用优惠券</text>
+        <view class="btn-clear" wx:if="{{selectedCoupons.length > 0}}" bindtap="clearCoupon" catchtap="clearCoupon">×</view>
+        <text class="arrow">></text>
+      </view>
+    </view>
+
+    <!-- 订单详情 -->
+    <view class="section order-section">
+      <view class="order-item">
+        <text class="order-label">单价</text>
+        <text class="order-value price">¥ {{unitPriceText}}</text>
+      </view>
+      <view class="order-item">
+        <text class="order-label">数量</text>
+        <text class="order-value">x {{quantity}}</text>
+      </view>
+      <view class="order-item">
+        <text class="order-label">折扣</text>
+        <text class="order-value discount">- ¥ {{discountAmountText}}</text>
+      </view>
+      <view class="order-divider"></view>
+      <view class="order-item total">
+        <text class="order-label">实付金额</text>
+        <text class="order-value total-price">¥ {{totalAmountText}}</text>
+      </view>
+    </view>
+
+    <!-- 提示信息 -->
+    <view class="info-section">
+      <text class="info-icon">ℹ</text>
+      <text class="info-text">课券购买后可在「我的—课券」中查看及使用</text>
+    </view>
+  </view>
+
+  <!-- 支付按钮 -->
+  <view class="pay-section">
+    <button class="btn-pay" bindtap="handlePay" disabled="{{loading}}">
+      <text class="pay-icon">💳</text>
+      <text>立即支付</text>
+    </button>
+  </view>
+
+  <!-- 优惠券选择器 -->
+  <view class="coupon-picker-mask" wx:if="{{showCouponPicker}}" bindtap="hideCouponPicker">
+    <view class="coupon-picker" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择优惠券（最多{{quantity}}张）</text>
+        <text class="picker-close" bindtap="hideCouponPicker">×</text>
+      </view>
+      <view class="picker-content">
+        <view class="coupon-option" bindtap="selectNoCoupon">
+          <text>不使用优惠券</text>
+          <text class="option-check" wx:if="{{selectedCoupons.length === 0}}">✓</text>
+        </view>
+        <view class="coupon-option" wx:for="{{availableCoupons}}" wx:key="id" bindtap="selectCoupon" data-id="{{item.id}}">
+          <view class="coupon-info">
+            <text class="coupon-amount">{{item.amount}}元</text>
+            <text class="coupon-expiry" wx:if="{{item.start_date_formatted || item.expiry_date_formatted}}">
+              <text wx:if="{{item.start_date_formatted && item.expiry_date_formatted}}">
+                {{item.start_date_formatted}} 至 {{item.expiry_date_formatted}}
+              </text>
+              <text wx:elif="{{item.start_date_formatted}}">
+                {{item.start_date_formatted}} 起
+              </text>
+              <text wx:elif="{{item.expiry_date_formatted}}">
+                至 {{item.expiry_date_formatted}}
+              </text>
+            </text>
+            <text class="coupon-expiry" wx:else>永久有效</text>
+          </view>
+          <text class="option-check" wx:if="{{item.isSelected}}">✓</text>
+        </view>
+        <view class="picker-empty" wx:if="{{availableCoupons.length === 0}}">
+          <text>暂无可用优惠券</text>
+          <text class="debug-info" style="font-size: 24rpx; color: #999; margin-top: 20rpx; display: block;">调试：已加载{{availableCoupons.length}}条</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">处理中...</view>
+</view>
+

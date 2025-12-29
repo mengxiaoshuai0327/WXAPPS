@@ -1,0 +1,21 @@
+{
+  "name": "xiaocx-admin",
+  "version": "1.0.0",
+  "description": "CFO高手私教小班课管理后台",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "axios": "^1.5.0",
+    "echarts": "^6.0.0",
+    "element-plus": "^2.3.14",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-router": "^5.0.8",
+    "@vue/cli-service": "^5.0.8"
+  }
+}

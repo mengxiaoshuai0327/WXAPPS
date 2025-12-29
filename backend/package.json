@@ -1,0 +1,40 @@
+{
+  "name": "xiaocx-backend",
+  "version": "1.0.0",
+  "description": "CFO高手私教小班课小程序后端服务",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "init-db": "node scripts/init-db.js",
+    "test-db": "node scripts/test-connection.js",
+    "insert-sample": "node scripts/insert-sample-data.js",
+    "insert-test-bookings": "node scripts/insert-test-bookings.js",
+    "insert-completed-course": "node scripts/insert-completed-course.js",
+    "insert-used-ticket-discount": "node scripts/insert-used-ticket-with-discount.js",
+    "insert-rankings": "node scripts/insert-ranking-data.js",
+    "add-published-field": "node scripts/add-published-field.js",
+    "insert-pending-evaluations": "node scripts/insert-pending-evaluations.js",
+    "show-pending-evaluations": "node scripts/show-pending-evaluations.js"
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.6.0",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.6.0",
+    "node-cron": "^4.2.1",
+    "qrcode": "^1.5.4",
+    "sharp": "^0.34.5",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

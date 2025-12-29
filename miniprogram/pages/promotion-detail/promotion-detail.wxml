@@ -1,0 +1,46 @@
+<!--pages/promotion-detail/promotion-detail.wxml-->
+<view class="container">
+  <view class="header-info">
+    <text class="header-title">{{title}}</text>
+    <text class="header-count">共{{invitations.length}}人</text>
+  </view>
+
+  <view class="invitation-list" wx:if="{{invitations.length > 0}}">
+    <view class="invitation-item" wx:for="{{invitations}}" wx:key="id">
+      <view class="item-header">
+        <view class="user-info">
+          <view class="avatar">
+            <text class="avatar-text">{{item.invitee_nickname ? item.invitee_nickname[0] : 'U'}}</text>
+          </view>
+          <view class="user-details">
+            <text class="user-name">{{item.invitee_nickname || '未设置昵称'}}</text>
+            <text class="user-id" wx:if="{{item.invitee_member_id}}">ID: {{item.invitee_member_id}}</text>
+          </view>
+        </view>
+        <view class="status-badge status-{{item.status}}">
+          {{item.status === 'registered' ? '已注册' : item.status === 'purchased' ? '已购券' : '待注册'}}
+        </view>
+      </view>
+      
+      <view class="item-info">
+        <view class="info-row" wx:if="{{item.registered_at_formatted && item.registered_at_formatted !== '-'}}">
+          <text class="info-label">注册时间：</text>
+          <text class="info-value">{{item.registered_at_formatted}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.purchased_at_formatted && item.purchased_at_formatted !== '-'}}">
+          <text class="info-label">购券时间：</text>
+          <text class="info-value">{{item.purchased_at_formatted}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">邀请时间：</text>
+          <text class="info-value">{{item.created_at_formatted}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text class="empty-text">{{emptyText}}</text>
+  </view>
+</view>
+

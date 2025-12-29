@@ -1,0 +1,127 @@
+<!--pages/evaluation/detail/detail.wxml-->
+<wxs module="helper">
+  function getAnswerText(question, answerValue, questionnaireTemplate) {
+    if (!question || !answerValue) {
+      return answerValue || '未回答';
+    }
+    
+    // 单选题或多选题
+    if (question.type === 'single' || question.type === 'multiple') {
+      if (question.options) {
+        var option = null;
+        for (var i = 0; i < question.options.length; i++) {
+          if (question.options[i].id === answerValue || question.options[i].value === answerValue) {
+            option = question.options[i];
+            break;
+          }
+        }
+        return option ? option.label : answerValue;
+      }
+    }
+
+    // 矩阵题
+    if (question.type === 'matrix' && question.matrixCols) {
+      var col = null;
+      for (var j = 0; j < question.matrixCols.length; j++) {
+        if (question.matrixCols[j].value === answerValue || question.matrixCols[j].id === answerValue) {
+          col = question.matrixCols[j];
+          break;
+        }
+      }
+      return col ? col.label : answerValue;
+    }
+
+    return answerValue;
+  }
+  
+  module.exports = {
+    getAnswerText: getAnswerText
+  };
+</wxs>
+
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+  
+  <view wx:else>
+    <!-- 课程信息 -->
+    <view class="course-info">
+      <view class="course-title">{{courseInfo.title}}</view>
+      <view class="course-meta">
+        <view class="meta-item" wx:if="{{courseInfo.schedule_date}}">
+          <text class="meta-label">课程日期:</text>
+          <text class="meta-value">{{courseInfo.schedule_date_display || (courseInfo.schedule_date + (courseInfo.time_slot_text ? ' ' + courseInfo.time_slot_text : ''))}}</text>
+        </view>
+        <view class="meta-item" wx:if="{{courseInfo.instructor_name}}">
+          <text class="meta-label">授课老师:</text>
+          <text class="meta-value">{{courseInfo.instructor_name}}</text>
+        </view>
+        <view class="meta-item" wx:if="{{evaluation.submitted_at_formatted}}">
+          <text class="meta-label">评价时间:</text>
+          <text class="meta-value">{{evaluation.submitted_at_formatted}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 评价答案列表 -->
+    <view class="answers-section">
+      <view class="section-title">评价详情</view>
+      
+      <view wx:if="{{questionnaireTemplate && questionnaireTemplate.questions && questionnaireTemplate.questions.length > 0}}">
+        <view wx:for="{{questionnaireTemplate.questions}}" wx:key="id" class="question-item">
+        <view class="question-text">{{item.text}}</view>
+        
+        <!-- 单选题 -->
+        <view wx:if="{{item.type === 'single'}}" class="answer-item">
+          <text class="answer-text">{{helper.getAnswerText(item, answers[item.id], questionnaireTemplate)}}</text>
+        </view>
+        
+        <!-- 多选题 -->
+        <view wx:if="{{item.type === 'multiple'}}" class="answer-item">
+          <text wx:if="{{answers[item.id] && answers[item.id].length > 0}}" class="answer-text">
+            <text wx:for="{{answers[item.id]}}" wx:key="*this" wx:for-item="ans" wx:for-index="ansIndex">
+              {{helper.getAnswerText(item, ans, questionnaireTemplate)}}<text wx:if="{{ansIndex < answers[item.id].length - 1}}">、</text>
+            </text>
+          </text>
+          <text wx:else class="answer-text">未回答</text>
+        </view>
+        
+        <!-- 评分题（Q6案例评分） -->
+        <view wx:if="{{item.type === 'rating' && item.id === 'q6'}}" class="answer-item">
+          <view wx:if="{{q6Formatted && q6Formatted.length > 0}}" class="case-ratings">
+            <view wx:for="{{q6Formatted}}" wx:key="caseId" class="case-rating-item">
+              <text class="case-name">{{item.caseName}}:</text>
+              <text class="case-score">{{item.score ? item.score + '分' : '未评分'}}</text>
+            </view>
+          </view>
+          <text wx:else class="answer-text">未回答</text>
+        </view>
+        
+        <!-- 文本题 -->
+        <view wx:if="{{item.type === 'text'}}" class="answer-item">
+          <text class="answer-text">{{answers[item.id] || '未回答'}}</text>
+        </view>
+        
+        <!-- 矩阵题（Q8未来课程报名） -->
+        <view wx:if="{{item.type === 'matrix' && item.id === 'q8'}}" class="answer-item">
+          <view wx:if="{{q8Formatted && q8Formatted.length > 0}}" class="matrix-answers">
+            <view wx:for="{{q8Formatted}}" wx:key="rowKey" class="matrix-answer-item">
+              <text class="matrix-row-label">{{item.rowLabel}}:</text>
+              <text class="matrix-col-label">{{item.colLabel}}</text>
+            </view>
+          </view>
+          <text wx:else class="answer-text">未回答</text>
+        </view>
+        </view>
+      </view>
+      <view wx:else class="empty-answers">
+        <text>正在加载评价详情...</text>
+      </view>
+      
+      <!-- 反馈意见 -->
+      <view wx:if="{{evaluation.feedback}}" class="feedback-section">
+        <view class="section-title">反馈意见</view>
+        <view class="feedback-content">{{evaluation.feedback}}</view>
+      </view>
+    </view>
+  </view>
+</view>

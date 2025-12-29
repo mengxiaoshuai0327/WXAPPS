@@ -1,0 +1,78 @@
+<!--pages/login/login.wxml-->
+<view class="container">
+  <!-- 顶部装饰 -->
+  <view class="top-decoration"></view>
+  
+  <view class="content-wrapper">
+    <view class="header">
+      <view class="title">登录</view>
+      <view class="subtitle">欢迎回来，请登录您的账号</view>
+    </view>
+
+    <!-- 登录方式切换 -->
+    <view class="login-type-tabs">
+      <view class="tab-item {{loginType === 'password' ? 'active' : ''}}" 
+            bindtap="switchLoginType" data-type="password">
+        <text class="tab-icon">🔒</text>
+        <text>密码登录</text>
+      </view>
+      <view class="tab-item {{loginType === 'code' ? 'active' : ''}}" 
+            bindtap="switchLoginType" data-type="code">
+        <text class="tab-icon">📱</text>
+        <text>验证码登录</text>
+      </view>
+    </view>
+
+    <!-- 登录表单 -->
+    <view class="form">
+      <!-- 手机号 -->
+      <view class="form-item">
+        <view class="input-wrapper">
+          <text class="input-icon">📞</text>
+          <input class="input" type="number" placeholder="请输入手机号" 
+                 value="{{phone}}" bindinput="onPhoneInput" maxlength="11" />
+        </view>
+      </view>
+
+      <!-- 密码登录 -->
+      <block wx:if="{{loginType === 'password'}}">
+        <view class="form-item">
+          <view class="input-wrapper">
+            <text class="input-icon">🔐</text>
+            <input class="input" type="password" placeholder="请输入密码" 
+                   value="{{password}}" bindinput="onPasswordInput" />
+          </view>
+        </view>
+      </block>
+
+      <!-- 验证码登录 -->
+      <block wx:else>
+        <view class="form-item code-form-item">
+          <view class="input-wrapper code-input-wrapper">
+            <text class="input-icon">✉️</text>
+            <input class="input code-input" type="number" placeholder="请输入验证码" 
+                   value="{{code}}" bindinput="onCodeInput" maxlength="6" />
+          </view>
+          <button class="code-btn {{countdown > 0 ? 'disabled' : ''}}" 
+                  bindtap="getVerificationCode" disabled="{{countdown > 0}}">
+            <text wx:if="{{countdown > 0}}" class="countdown-text">{{countdown}}秒后重试</text>
+            <text wx:else class="code-btn-text">获取验证码</text>
+          </button>
+        </view>
+      </block>
+
+      <!-- 登录按钮 -->
+      <button class="login-btn {{phone && (loginType === 'password' ? password : code) ? 'active' : ''}}" 
+              bindtap="doLogin">
+        <text class="login-btn-text">登录</text>
+      </button>
+
+      <!-- 注册链接 -->
+      <view class="register-link">
+        <text class="register-text">还没有账号？</text>
+        <text class="link-text" bindtap="goToRegister">立即注册</text>
+      </view>
+    </view>
+  </view>
+</view>
+

@@ -1,0 +1,40 @@
+<svg width="81" height="81" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 填充的头部 -->
+  <circle cx="12" cy="8" r="4" fill="currentColor"/>
+  <!-- 填充的身体 -->
+  <path d="M5 20C5 16.6863 7.68629 14 11 14H13C16.3137 14 19 16.6863 19 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="currentColor"/>
+  <!-- 眼睛 -->
+  <circle cx="9" cy="8" r="1" fill="white"/>
+  <circle cx="15" cy="8" r="1" fill="white"/>
+  <!-- 微笑 -->
+  <path d="M9 11C9 11 10.5 12.5 12 12.5C13.5 12.5 15 11 15 11" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+</svg>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

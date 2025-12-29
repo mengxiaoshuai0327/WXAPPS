@@ -1,0 +1,88 @@
+<!--pages/invoice/invoice.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="header-title">开发票</view>
+  </view>
+
+  <view class="tabs">
+    <view class="tab-item {{currentTab === 'unissued' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="unissued">未开</view>
+    <view class="tab-item {{currentTab === 'issued' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="issued">已开</view>
+  </view>
+
+  <view class="tickets-list" wx:if="{{tickets && tickets.length > 0}}">
+    <view class="ticket-item" wx:for="{{tickets}}" wx:key="id">
+      <view class="ticket-info">
+        <view class="ticket-code">课券编号：{{item.ticket_code}}</view>
+        <view class="ticket-amount">金额：¥{{item.actual_amount_formatted || '0.00'}}</view>
+        <view class="ticket-time">使用时间：{{item.used_at_formatted}}</view>
+      </view>
+      <view class="ticket-action" wx:if="{{currentTab === 'unissued'}}">
+        <view class="checkbox-wrapper" bindtap="toggleTicket" data-id="{{item.id}}">
+          <view class="checkbox {{item.isSelected === true ? 'checked' : ''}}">
+            <text wx:if="{{item.isSelected === true}}" class="checkmark">✓</text>
+          </view>
+        </view>
+      </view>
+      <view class="ticket-action" wx:else>
+        <view class="invoice-status">
+          <text class="invoice-status-text" wx:if="{{item.invoice_info && item.invoice_info.invoice_number}}">
+            发票号：{{item.invoice_info.invoice_number}}
+          </text>
+          <text class="invoice-status-text status-pending" wx:elif="{{item.invoice_info && (item.invoice_info.status === 'pending' || item.invoice_info.status === 'processing')}}">
+            已申请
+          </text>
+          <text class="invoice-status-text" wx:else>发票处理中</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{(!tickets || tickets.length === 0) && !loading}}" class="empty-state">
+    <text>暂无可开发票的课券</text>
+  </view>
+
+  <!-- 底部提交按钮 -->
+  <view class="action-section" wx:if="{{currentTab === 'unissued' && selectedTickets.length > 0}}">
+    <button class="btn-invoice" bindtap="showInvoiceForm">提交开发票（{{selectedTickets.length}}张）</button>
+  </view>
+
+  <!-- 发票信息填写弹窗 -->
+  <view class="invoice-modal" wx:if="{{showForm}}" bindtap="cancelForm">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <view class="form-title">填写发票信息</view>
+        <view class="close-btn" bindtap="cancelForm">×</view>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label required">发票抬头</text>
+          <input class="form-input" value="{{invoiceForm.header}}" bindinput="onHeaderInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">税号</text>
+          <input class="form-input" value="{{invoiceForm.tax_number}}" bindinput="onTaxNumberInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label required">收发票邮箱</text>
+          <input class="form-input" type="text" value="{{invoiceForm.email}}" bindinput="onEmailInput" />
+        </view>
+        <view class="form-item">
+          <text class="form-label">发票金额</text>
+          <text class="form-value">¥{{totalAmount}}</text>
+        </view>
+        <view class="form-tips">
+          <text>共选择 {{selectedTickets.length}} 张课券，总金额 ¥{{totalAmount}}</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="btn-cancel" bindtap="cancelForm">取消</button>
+        <button class="btn-submit" bindtap="submitInvoice">确认提交</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+</view>
+

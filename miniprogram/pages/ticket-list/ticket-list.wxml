@@ -1,0 +1,88 @@
+<!--pages/ticket-list/ticket-list.wxml-->
+<view class="container">
+  <view class="tabs">
+    <view class="tab-item {{currentTab === 'unused' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="unused">未使用</view>
+    <view class="tab-item {{currentTab === 'booked' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="booked">已预订</view>
+    <view class="tab-item {{currentTab === 'used' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="used">已使用</view>
+    <view class="tab-item {{currentTab === 'expired' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="expired">已过期</view>
+    <view class="tab-item {{currentTab === 'gifted' ? 'active' : ''}}" 
+          bindtap="switchTab" data-tab="gifted">已赠送</view>
+  </view>
+
+  <view class="ticket-list">
+    <view class="ticket-item" wx:for="{{tickets}}" wx:key="id" bindtap="viewTicketDetail" data-id="{{item.id}}">
+      <view class="ticket-code">{{item.ticket_code}}</view>
+      <view class="ticket-info">
+        <!-- 已预订标签页：显示课程信息和预订时间 -->
+        <block wx:if="{{currentTab === 'booked'}}">
+          <view class="info-row">
+            <text>预订课程：{{item.course_title || '暂无课程信息'}}</text>
+          </view>
+          <view class="info-row">
+            <text>上课时间：{{item.course_date_time || '暂无时间信息'}}</text>
+          </view>
+          <view class="info-row">
+            <text>预订时间：{{item.booked_at_formatted || '暂无预订时间'}}</text>
+          </view>
+        </block>
+        
+        <!-- 已使用标签页：显示课程信息和上课时间 -->
+        <block wx:elif="{{currentTab === 'used'}}">
+          <view class="info-row">
+            <text>购买课程：{{item.course_title || '暂无课程信息'}}</text>
+          </view>
+          <view class="info-row">
+            <text>上课时间：{{item.course_date_time || '暂无时间信息'}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.used_at_formatted}}">
+            <text>使用时间：{{item.used_at_formatted}}</text>
+          </view>
+        </block>
+        
+        <!-- 未使用标签页：显示购买时间和有效期 -->
+        <block wx:elif="{{currentTab === 'unused'}}">
+          <view class="info-row">
+            <text>购买时间：{{item.purchased_at_formatted || '暂无购买时间'}}</text>
+          </view>
+          <view class="info-row">
+            <text>有效期：{{item.expiry_date_range || '暂无有效期'}}</text>
+          </view>
+        </block>
+        
+        <!-- 已赠送标签页：显示接收人信息和赠送时间 -->
+        <block wx:elif="{{currentTab === 'gifted'}}">
+          <view class="info-row" wx:if="{{item.receiver_name || item.receiver_member_id}}">
+            <text>接收人：{{item.receiver_name || ''}} {{item.receiver_member_id || ''}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.gifted_at_formatted}}">
+            <text>赠送时间：{{item.gifted_at_formatted}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.expiry_date_range}}">
+            <text>有效期：{{item.expiry_date_range}}</text>
+          </view>
+        </block>
+        
+        <!-- 其他标签页（已过期）：显示获得方式、有效期 -->
+        <block wx:else>
+          <view class="info-row" wx:if="{{item.source_text}}">
+            <text>获得方式：{{item.source_text}}</text>
+          </view>
+          <view class="info-row" wx:if="{{item.expiry_date_range}}">
+            <text>有效期：{{item.expiry_date_range}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <view wx:if="{{tickets.length === 0 && !loading}}" class="empty-state">
+      <text>暂无课券</text>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+</view>
+
